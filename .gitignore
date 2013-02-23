@@ -1,3 +1,20 @@
+<<<<<<< HEAD
 *.class
 *.pyc
 *.pyo
+=======
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+npm-debug.log
+>>>>>>> f4b63660ed33e4ed4c724aeb2a36a85aed3d34f1
