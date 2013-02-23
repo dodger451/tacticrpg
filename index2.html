@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport"
+		  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi"/>
+
+	<style>
+		html, body {
+			overflow: hidden;
+			width: 100%;
+			height: 100%;
+			margin:0;
+			padding:0;
+			border: 0;
+		}
+
+	</style>
+	<script src="js/crafty.js"></script>
+	<!-- scenes -->
+	<script src="js/scenes/battlefieldScene.js"></script>
+	<script src="js/scenes/loadingScene.js"></script>
+	
+	<script>
+	window.onload = function() {
+			// Init crafty in full screen
+			Crafty.init();
+
+			// Init canvas
+			Crafty.canvas.init();
+
+			//setup scenes
+			Crafty.scene("loading", loadingScene());
+			Crafty.scene("battlefield", battlefieldScene());
+			
+			// Start the "loading" scene
+			Crafty.scene("loading");
+		};
+	</script>
+</head>
+<body>
+
+</body>
+</html>
