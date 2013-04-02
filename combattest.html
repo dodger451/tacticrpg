@@ -67,7 +67,7 @@
 			
 			//print result
 			var msg = attacker.getId() + ' attacks ' + defender.getId();
-			var attackerSpeed = attacker.getAttackWeapon().getSpeed();//this long will the action take
+			var attackerSpeed = attacker.getAttackSpeed();//this long will the action take
 			msg += '\n' + 'duration: ' + attackerSpeed;
 			msg += '\n' + 'weapon-range: ' + attacker.getMinDamage() + '-' + attacker.getMaxDamage();
 			msg += '\n\n' + 'result: ' + ruleBook.attackResultToString(result);

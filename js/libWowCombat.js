@@ -229,6 +229,9 @@ Combatant.prototype.getRangeAttackPower = function() {
 	//dummy
 }
 /**
+ *
+ * Uses weapon's speed, not players speed  
+ *
  * @see http://www.wowwiki.com/Damage_per_second
  * Minimum Range = (((Minimum damage / Weapon Speed) + (Melee Attack Power / 14)) * (Weapon Speed)) * (Dual Wield Penalty)/
  * Minimum Range = (((Minimum damage + Scope damage bonus) / Weapon Speed) + (Ranged Attack Power / 14) + Ammo DPS bonus) * Weapon Speed
@@ -238,23 +241,36 @@ Combatant.prototype.getDamage = function(weaponDamage) {
 	var dmg = 0;
 	if (attackWeapon.isMelee()) {
 		dmg = (
-			(weaponDamage / attackWeapon.getSpeed())  
+			(weaponDamage / attackWeapon.getBaseSpeed())  
 			+ (this.getMeleeAttackPower() / 14)
-			) * attackWeapon.getSpeed();
+			) * attackWeapon.getBaseSpeed();
 	} else {//range-weapon
 		dmg = (
-			((weaponDamage + attackWeapon.getScopeDamageBonus()) / attackWeapon.getSpeed()) 
+			((weaponDamage + attackWeapon.getScopeDamageBonus()) / attackWeapon.getBaseSpeed()) 
 			+ (this.getRangeAttackPower() / 14) 
 			+ attackWeapon.getAmmoDpsBonus()
-			) * attackWeapon.getSpeed();
+			) * attackWeapon.getBaseSpeed();
 	}
 	return dmg;
 }
 
+/**
+ * Effective max damage of combatant when attacking with autoattack.
+ *  
+ */
 Combatant.prototype.getMaxDamage = function() {
+	//TODO Make getMaxDamage return effectiv max damage (including combatants mods)
+	//note attack-weapon applies weapon-mods biund to weapon
 	return this.getDamage(this.getAttackWeapon().getMaxDamage());
 }
 Combatant.prototype.getMinDamage = function() {
+	return this.getDamage(this.getAttackWeapon().getMinDamage());
+}
+
+/**
+ *http://www.wowwiki.com/Attack_speed 
+ */
+Combatant.prototype.getAttackSpeed = function() {
 	return this.getDamage(this.getAttackWeapon().getMinDamage());
 }
 //
@@ -267,8 +283,11 @@ function Weapon(weaponConfig) {
 Weapon.prototype.isMelee = function() {
 	return this._config.isMeleeWeapon;
 }
-Weapon.prototype.getSpeed = function() {
-	//TODO Weapon.getSpeed get effective speed of weapon including weapon-mods
+
+/**
+ * Returns base speed, not effective player's attack-speed
+ */	
+Weapon.prototype.getBaseSpeed = function() {
 	return this._config.speed;
 }
 Weapon.prototype.getMinDamage = function() {
