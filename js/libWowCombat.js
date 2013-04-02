@@ -271,7 +271,7 @@ Combatant.prototype.getMinDamage = function() {
  *http://www.wowwiki.com/Attack_speed 
  */
 Combatant.prototype.getAttackSpeed = function() {
-	return this.getDamage(this.getAttackWeapon().getMinDamage());
+	return this.getAttackWeapon().getBaseSpeed();
 }
 //
 /// Weapon
