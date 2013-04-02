@@ -1,8 +1,99 @@
 <html>
 	<head>
+		<script src="js/utils/priority_queue.js"></script>
+		<script src="js/utils/utils.js"></script>
 		<script src="js/libWowCombat.js"></script>
 	</head>
 	<body>
-		
+		<button onclick="runTest();">run test</button>
+	<table>
+		<tr id='prioQueue'>
+			<td>&nbsp;</td>
+		</tr>
+	</table>
+
 	</body>
+	<script>
+		//
+		// TEST
+		//
+		var mob1 = new Combatant('Mob1');
+		var mob2 = new Combatant('Mob2');
+		var mob3 = new Combatant('Mob3');
+		mob2.setAttackWeapon(new Weapon(heavyMeleeWeaponConfig)); //todo: crate a rangeweapon
+		mob3.setAttackWeapon(new Weapon(defaultRangeWeaponConfig)); //todo: crate a rangeweapon
+
+		//prio-queue
+		
+		//helper
+		function renderQueue(queue)
+		{
+			var newContent = '';
+			var queueElements = queue.getAll();
+			//for(var i = queueElements.length - 1; i >= 0; i--) {
+			for(var i = 0; i < queueElements.length ; i++) {
+				newContent = newContent + '<td>';
+          		newContent = newContent + 'combatant "' + queueElements[i].object.getId() + '"<br />' ;
+          		newContent = newContent + 'prio:' + queueElements[i].priority;
+          		newContent = newContent + '</td>';
+        	}
+        	return newContent;
+		}
+		
+		//init queue
+		turnQueue = PriorityQueue({low: true});
+        //turnQueue = PriorityQueue();
+        turnQueue.push(mob1, 0);
+        turnQueue.push(mob2, 0);
+        turnQueue.push(mob3, 0);
+        
+        //draw current queue
+        var newContent = renderQueue(turnQueue);
+        document.getElementById('prioQueue').innerHTML = newContent;
+
+
+
+		function runTest() {
+			var ruleBook = new Combatrules();
+			
+			//find the next combatant from queue
+			//and determine how much time must pass until he perfomrs his action
+			var attackerPrio = turnQueue.topPriority();
+			var attacker = turnQueue.pop();//remove top-most from queue
+			//action: attack next in line
+			var defender = turnQueue.top();//next one in queue is being attacked
+			//run attack
+			var result = ruleBook.getAutoAttackResult(attacker, defender);
+			
+			//print result
+			var msg = attacker.getId() + ' attacks ' + defender.getId();
+			var attackerSpeed = attacker.getAttackWeapon().getSpeed();//this long will the action take
+			msg += '\n' + 'duration: ' + attackerSpeed;
+			msg += '\n' + 'weapon-range: ' + attacker.getMinDamage() + '-' + attacker.getMaxDamage();
+			msg += '\n\n' + 'result: ' + ruleBook.attackResultToString(result);
+			if (ruleBook.ATTACKRESULT_ORDINARY_HIT == result) {
+				var minDmgRoll=attacker.getMinDamage();
+				var maxDmgRoll=attacker.getMaxDamage();
+				
+				var rnd = Math.random();
+				var dmgRoll = minDmgRoll + rnd*(maxDmgRoll-minDmgRoll);
+	
+				msg += '\n' +'dmg-roll: ' + dmgRoll;
+			}
+			alert(msg);
+			
+			//let the time pass: lower priority of all other in queue
+			turnQueue.addPriorityToAll(-1 * attackerPrio);
+			//enqueue attacker again
+			turnQueue.push(attacker, attackerSpeed);
+			
+			//re-draw current queue
+		    document.getElementById('prioQueue').innerHTML = renderQueue(turnQueue);
+			
+		}
+
+	</script>	
+
+	
+	
 </html>
