@@ -290,13 +290,20 @@ Weapon.prototype.isMelee = function() {
 Weapon.prototype.getBaseSpeed = function() {
 	return this._config.speed;
 }
+Weapon.prototype.geBaseMinDamage = function() {
+	return this._config.minDamage;
+}
+
 Weapon.prototype.getMinDamage = function() {
 	//TODO get Weapon.effective minDamage of weaponincluding weapon-mods
-	return this._config.minDamage;
+	return this.geBaseMinDamage();
+}
+Weapon.prototype.getBaseMaxDamage = function() {
+	return this._config.maxDamage;
 }
 Weapon.prototype.getMaxDamage = function() {
 	//TODO get Weapon.effective maxDamage of weapon including weapon-mods
-	return this._config.maxDamage;
+	return this.getBaseMaxDamage();
 }
 Weapon.prototype.getScopeDamageBonus = function() {
 	//TODO get Weapon.effective Scope Damage Bonus of weapon including all mods
