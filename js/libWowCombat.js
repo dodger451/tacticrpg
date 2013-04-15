@@ -1,14 +1,18 @@
 /// Combatrules
 
 function Combatrules() {
-	this.ATTACKRESULT_MISS = 0;
-	this.ATTACKRESULT_DODGE = 1;
-	this.ATTACKRESULT_PARRY = 2;
-	this.ATTACKRESULT_GLANCING_BLOW = 3;
-	this.ATTACKRESULT_BLOCK = 4;
-	this.ATTACKRESULT_CRITICALHIT = 5;
-	this.ATTACKRESULT_CRUSHING_BLOW = 6;
-	this.ATTACKRESULT_ORDINARY_HIT = 7;
+	this.ATTACKRESULT_MISS = "ATTACKRESULT_MISS";
+	this.ATTACKRESULT_DODGE = "ATTACKRESULT_DODGE";
+	this.ATTACKRESULT_PARRY = "ATTACKRESULT_PARRY";
+	this.ATTACKRESULT_GLANCING_BLOW = "ATTACKRESULT_GLANCING_BLOW";
+	this.ATTACKRESULT_BLOCK = "ATTACKRESULT_BLOCK";
+	this.ATTACKRESULT_CRITICALHIT = "ATTACKRESULT_CRITICALHIT";
+	this.ATTACKRESULT_CRUSHING_BLOW = "ATTACKRESULT_CRUSHING_BLOW";
+	this.ATTACKRESULT_ORDINARY_HIT = "ATTACKRESULT_ORDINARY_HIT";
+	
+	this.DAMAGETYPE_WHITE = "DAMAGETYPE_WHITE";
+	
+	return 0;
 
 }
 
@@ -33,16 +37,37 @@ Combatrules.prototype.getMissChance = function(attacker, defender) {
 		return basechance + (defender.getDefenseSkill() - attacker.getAttackSkill() - 10) * 0.4;
 	}
 }
+
 Combatrules.prototype.getDodgeChance = function(attacker, defender) {
-	return 5;
-	//TODO calc Combatrules.getDodgeChance
+	return defender.getDodgeChance();	
 }
+
+
+/**
+ * Your chance to parry is based on the formula: 
+ * % = 5% base chance + contribution from parry rating + contribution from talents + ((Defense skill - attacker's weapon skill) * 0.04) 
+ * 
+ * @see http://www.wowwiki.com/Parry
+ * 
+ */
 Combatrules.prototype.getParryChance = function(attacker, defender) {
-	return 5;
-	//TODO calc Combatrules.getParryChance
+	return defender.getParryChance() + ((defender.getDefenseSkill() - attacker.getAttackSkill()) * 0.04) ;
 }
-Combatrules.prototype.getGlancingBlowChance = function(attacker, defender) {
-	return 5;
+/**
+ * http://www.wowwiki.com/Glancing_blow
+ * 
+ * The new formula seems to be: glancing blow chance = 10 + mob defense - player weapon skill 
+ */
+Combatrules.prototype.getGlancingBlowChance = function(attacker, defender, damageType) {
+	if (
+		!defender.isMob() 
+		|| defender.getLevel() < attacker.getLevel() 
+		|| attacker.getDamageType() != Combatrules.DAMAGETYPE_WHITE
+		) {
+		return 0;
+	}
+	return Math.max(0, 10+(defender.getDefenseSkill() - attacker.getAttackSkill()))
+	
 	//TODO calc Combatrules.getGlancingBlowChance
 }
 Combatrules.prototype.getBlockChance = function(attacker, defender) {
@@ -273,6 +298,180 @@ Combatant.prototype.getMinDamage = function() {
 Combatant.prototype.getAttackSpeed = function() {
 	return this.getAttackWeapon().getBaseSpeed();
 }
+
+
+/**
+ * The amount of dodge you have is affected by your class, level, talents, agility, dodge rating, defense rating, and defense skill.
+ * 
+ * Dodge generally goes into two pools that are added together: undiminished and diminished dodge.
+ * Your undiminished dodge includes your class's base dodge, dodge from any talents (such as Anticipation),
+ * and the dodge your receive from your base agility. 
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getDodgeChance = function() {
+	var b = this.getBaseDodgeChance();//todo
+	var t = this.getDodgeChanceFromTalents();//todo
+	var ab = this.getDodgeChanceFromBaseAgility();//todo
+	var d = this.getDiminishedDodgeChance();//todo
+	return b + t + ab + d;	
+}
+
+/**
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getBaseDodgeChance = function() {
+	//TODO getBaseDodgeChance based on class and level
+	return 3;//percetage
+
+}
+
+/**
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getDodgeChanceFromTalents = function() {
+	//TODO getDodgeChanceFromTalents based on real talents
+	return 0;
+}
+
+/**
+ * Ab
+ * 
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getDodgeChanceFromBaseAgility = function() {
+	var dodgeFromAgility = this.getUndiminishedAgility() / this.getAgilityDodgeRate();
+	var dodgeFromDefense = (this.getUndiminishedDefenseSkill() - (this.getLevel() * 5) * 0.04) / this.getAgilityDodgeRate();
+	return dodgeFromAgility + dodgeFromDefense;
+	
+}
+
+
+/**
+ * Fs
+ * 
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getUndiminishedDefenseSkill = function() {
+	return this.getBaseDefenceSkill() + this.getDefenseSkillBonusFromTalents();
+}
+
+/**
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getBaseDefenceSkill = function() {
+	//TODO getBaseDefenceSkill from base value
+	return 100;
+}
+
+/**
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getDefenseSkillBonusFromTalents = function() {
+	//TODO getDefenseSkillBonusFromTalents from talents
+	return 0;
+}
+
+/**
+ * Db
+ * 
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getUndiminishedAgility = function() {
+	//TODO getUndiminishedAgility based on base-agility and talents
+	return this.getBaseAgility() + this.getAbilityBonusFromTalents();
+}
+
+/**
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getBaseAgility = function() {
+	//TODO getBaseAgility based on base-agility value
+	return 92;
+}
+
+
+/**
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getAbilityBonusFromTalents = function() {
+	//TODO getAbilityBonusFromTalents based on talents.enchants ect (but not gear)
+	return 0;
+}
+
+
+/**
+ *  Rd
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getAgilityDodgeRate = function() {
+	//TODO getAgilityDodgeRate based on class and level
+	return 52;
+	
+}
+
+/**
+ * @see http://www.wowwiki.com/Dodge
+ */
+Combatant.prototype.getDiminishedDodgeChance = function() {
+	//TODO getDiminishedDodgeChance based on described method
+	return 0;
+}
+
+
+
+/**
+ * 5% base chance + contribution from parry rating + contribution from talents
+ * 
+ * @see http://www.wowwiki.com/Parry
+ */
+Combatant.prototype.getParryChance = function() {
+	//TODO getParryChance also based on contribution from parry rating + contribution from talents
+	return this.getBaseParryChance();
+}
+/**
+ * 5% base chance 
+ * 
+ * @see http://www.wowwiki.com/Parry
+ */
+Combatant.prototype.getBaseParryChance = function() {
+	return 5;
+}
+
+/**
+ * 
+ */
+Combatant.prototype.getParryChanceFromRating = function() {
+	return this.getParryRating() / this.getParryRatingParryRate();
+}
+
+/**
+ * @see http://www.wowwiki.com/Combat_rating_system
+ */
+Combatant.prototype.getParryRating = function() {
+	//TODO getParryRating
+	return 10;
+}
+/**
+ * 
+ * @see http://www.wowwiki.com/Combat_rating_system
+ */
+Combatant.prototype.getParryRatingParryRate = function() {
+//	13.8 	21.76 	45.25
+	return 45.25;
+}
+
+/**
+ * 
+ * @see http://www.wowwiki.com/Glancing_blow
+ */
+Combatant.prototype.getDamageType = function() {
+	this.getAttackWeapon().getDamageType();
+}
+
+
+
+
+//	13.8 	21.76 	45.25
 //
 /// Weapon
 //
@@ -306,22 +505,34 @@ Weapon.prototype.getAmmoDpsBonus = function() {
 	//TODO get Weapon.effective Ammo Damage Bonus of weapon including all mods in dps
 	return 1;
 }
+
+/**
+ * 
+ * @see http://www.wowwiki.com/Glancing_blow
+ */
+Weapon.prototype.getDamageType = function() {
+	return this._config.damageType;
+}
+
 var defaultMeleeWeaponConfig = {
 	isMeleeWeapon : true,
 	maxDamage : 15,
 	minDamage : 10,
-	speed : 2.0
+	speed : 2.0,
+	damageType: "DAMAGETYPE_WHITE"
 }
 var heavyMeleeWeaponConfig = {
 	isMeleeWeapon : true,
 	maxDamage : 30,
 	minDamage : 15,
-	speed : 3.0
+	speed : 3.0,
+	damageType: "DAMAGETYPE_WHITE"
 }
 var defaultRangeWeaponConfig = {
 	isMeleeWeapon : false,
 	maxDamage : 20,
 	minDamage : 15,
-	speed : 2.5
+	speed : 2.5,
+	damageType: "DAMAGETYPE_WHITE"
 }
 
