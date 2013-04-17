@@ -58,7 +58,7 @@ Combatrules.prototype.getParryChance = function(attacker, defender) {
  * 
  * The new formula seems to be: glancing blow chance = 10 + mob defense - player weapon skill 
  */
-Combatrules.prototype.getGlancingBlowChance = function(attacker, defender, damageType) {
+Combatrules.prototype.getGlancingBlowChance = function(attacker, defender) {
 	if (
 		!defender.isMob() 
 		|| defender.getLevel() < attacker.getLevel() 
@@ -66,10 +66,12 @@ Combatrules.prototype.getGlancingBlowChance = function(attacker, defender, damag
 		) {
 		return 0;
 	}
-	return Math.max(0, 10+(defender.getDefenseSkill() - attacker.getAttackSkill()))
-	
-	//TODO calc Combatrules.getGlancingBlowChance
+	return Math.max(0, 10 + (defender.getDefenseSkill() - attacker.getAttackSkill()));
 }
+
+/**
+ * @see http://www.wowwiki.com/Block
+ */
 Combatrules.prototype.getBlockChance = function(attacker, defender) {
 	return 5;
 	//TODO calc Combatrules.getBlockChance
