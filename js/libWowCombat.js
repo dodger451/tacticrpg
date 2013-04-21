@@ -70,11 +70,18 @@ Combatrules.prototype.getGlancingBlowChance = function(attacker, defender) {
 }
 
 /**
+ * The formula: 
+ * Block% = 5% base chance 
+ * 			+ contribution from Block Rating 
+ * 			+ contribution from talents 
+ * 			+ ((Defense skill - attacker's weapon skill) * 0.04) 
+ * 
  * @see http://www.wowwiki.com/Block
  */
 Combatrules.prototype.getBlockChance = function(attacker, defender) {
-	return 5;
-	//TODO calc Combatrules.getBlockChance
+	return 5 + defender.getBlockChanceFromRating() 
+	+ defender.getBlockChanceFromTalents() 
+	+ (defender.getDefenseSkill() - attacker.getAttackSkill()) * 0.04;
 }
 Combatrules.prototype.getCriticalHitChance = function(attacker, defender) {
 	return 5;
@@ -467,11 +474,27 @@ Combatant.prototype.getParryRatingParryRate = function() {
  * @see http://www.wowwiki.com/Glancing_blow
  */
 Combatant.prototype.getDamageType = function() {
-	this.getAttackWeapon().getDamageType();
+	return this.getAttackWeapon().getDamageType();
 }
 
-
-
+/**
+ * 
+ * @see http://www.wowwiki.com/Block
+ */
+Combatant.prototype.getBlockChanceFromRating = function() {
+	//TODO impl Combatant getBlockChanceFromRating 
+	return 0;
+}
+/**
+ * 
+ * @see http://www.wowwiki.com/Block
+ */
+Combatant.prototype.getBlockChanceFromTalents = function() {
+	//TODO impl Combatant getBlockChanceFromTalents
+	return 0;
+}
+	 
+	
 
 //	13.8 	21.76 	45.25
 //
