@@ -23,19 +23,37 @@ function Combatrules() {
  */
 Combatrules.prototype.getMissChance = function(attacker, defender) {
 
-	if (10 >= Math.abs(defender.getDefenseSkill() - attacker.getAttackSkill())) {
+	var diff = defender.getDefenseSkill() - attacker.getAttackSkill();
+	console.log('getMissChance : diff='+diff+'= defender "'+defender.getId()+'" getDefenseSkill() = '+defender.getDefenseSkill()+' - attacker "'+attacker.getId()+'" getAttackSkill()='+attacker.getAttackSkill()+'');
+	if (!defender.isMob()) {//vs player
+		//When a player or mob attacks a player, the base miss rate is 5%.
 		var basechance = 5;
-		if (attacker.isDualWielding()) {
-			basechance = 24;
+		//For each point of the defender's defense skill over the attacker's attack rating, the base miss rate increases by 0.04%.
+		if (diff>0) {
+			return basechance + (0.04*diff);
+		} else {
+			//For each point of the attacker's attack rating over the defender's defense skill, the base miss rate decreases by 0.02%. 
+			return Math.max(0.0, basechance + (0.02*diff));
 		}
-		return basechance + (defender.getDefenseSkill() - attacker.getAttackSkill()) * 0.1;
-	} else {
-		var basechance = 6;
-		if (attacker.isDualWielding()) {
-			basechance = 25;
+	} else {//vs mob
+		
+		if (10 >= Math.abs(diff)) {
+			var basechance = 5;
+			if (attacker.isDualWielding()) {
+				basechance = 24;
+			}
+			console.log('getMissChance: return for diff smaller 10 against mob');
+			return basechance + (diff) * 0.1;
+		} else {
+			var basechance = 6;
+			if (attacker.isDualWielding()) {
+				basechance = 25;
+			}
+			console.log("last caase, diff:" + diff);
+			return Math.max(0.0, (basechance + (diff - 10)* 0.4));
 		}
-		return basechance + (defender.getDefenseSkill() - attacker.getAttackSkill() - 10) * 0.4;
 	}
+	
 }
 
 Combatrules.prototype.getDodgeChance = function(attacker, defender) {
@@ -83,9 +101,27 @@ Combatrules.prototype.getBlockChance = function(attacker, defender) {
 	+ defender.getBlockChanceFromTalents() 
 	+ (defender.getDefenseSkill() - attacker.getAttackSkill()) * 0.04;
 }
+/**
+ * 
+ * Mobs which are the same level as you always have a 5% chance to crit.
+ * The attack rating equals the skill with the currently equipped weapon (WS = Weapon Skill), 
+ * being level * 5 for mobs and the same for player chars with maximum weapon skill. 
+ * Each point of AR exceeding the target's Defense will increase chance to crit by 0.04%. 
+ * 
+ * @see http://www.wowwiki.com/Critical_strike
+ */
 Combatrules.prototype.getCriticalHitChance = function(attacker, defender) {
-	return 5;
-	//TODO calc Combatrules.getCriticalHitChance
+	var critModifier=0;//TODO 
+	var attDiff = defender.getDefenseSkill() - attacker.getAttackSkill(); 
+	if (defender.isMob()) {
+		if (attDiff > 0) {
+			critModifier = -0.2 * attDiff;
+		}
+	} else {
+		critModifier = -0.4 * attDiff;
+	}
+	return attacker.getCritChance() + critModifier;
+	
 }
 Combatrules.prototype.getCrushingBlowChance = function(attacker, defender) {
 	return 5;
@@ -216,34 +252,54 @@ Combatant.prototype.getAttackWeapon = function() {
 Combatant.prototype.setAttackWeapon = function(weapon) {
 	this._currentAttackWeapon = weapon;
 }
-Combatant.prototype.getDefenseSkill = function() {
-	return 100;
-	//TODO calc Combatant.getDefenseSkill
+
+/**
+ * 
+ */
+Combatant.prototype.getBaseAttackSkill = function() {
+	//TODO getBaseDefenceSkill from base value
+	return 400;
 }
+
+/**
+ * Based on current equipped weapon's skill.
+ * 
+ * @see http://www.wowwiki.com/Attack_Rating
+ */
 Combatant.prototype.getAttackSkill = function() {
-	return 100;
-	//TODO calc Combatant.getAttackSkill
+	if(this.isMob()) {
+		//Calculating a mob's Defense Skill or Attack Rating
+		//This is a rather simple formula. It is the Mob's level multiplied by 5
+		return this.getLevel() * 5;
+		//For Skull Bosses, the formula is your level plus 3, multiplied by 5
+	} else {
+		//console.log('returning getBaseAttackSkill...');
+		return this.getBaseAttackSkill(); //TODO calc Combatant.getAttackSkill		
+	}
+}
+
+/**
+ * Effective defensive skill for calculaions in combat
+ * @see http://www.wowwiki.com/Miss
+ */
+Combatant.prototype.getDefenseSkill = function() {
+	if(this.isMob()) {
+		//Calculating a mob's Defense Skill or Attack Rating
+		//This is a rather simple formula. It is the Mob's level multiplied by 5
+		console.log('returning for "'+this.getId()+'" mobbased def for level ...' + this.getLevel() + '=' + (this.getLevel() * 5));
+		return this.getLevel() * 5;
+		//For Skull Bosses, the formula is your level plus 3, multiplied by 5
+	} else {
+		console.log('returning getBaseDefenseSkill...');
+		return this.getBaseDefenseSkill(); //TODO calc Combatant.getDefenseSkill
+		
+	}
 }
 Combatant.prototype.isDualWielding = function() {
 	return false;
 	//TODO calc Combatant.isDualWielding
 }
-/**
- * Effective defensive skill for calculaions in combat
- */
-Combatant.prototype.getDefenseSkill = function() {
-	//TODO calc Combatant.getDefenseSkill
-	// It is the Mob's level multiplied by 5.
-	return 299;
-}
-/**
- * Effective melee attack skill for calculations in combat
- */
-Combatant.prototype.getAttackSkill = function() {
-	//TODO calc Combatant.getAttackSkill depending on current attackWeapon inlcuding all mods
-	// It is the Mob's level multiplied by 5.
-	return 299;
-}
+
 /**
  * Effective melee attack power for calculating damage in combat
  * http://www.wowwiki.com/Attack_power
@@ -361,15 +417,15 @@ Combatant.prototype.getDodgeChanceFromBaseAgility = function() {
  * @see http://www.wowwiki.com/Dodge
  */
 Combatant.prototype.getUndiminishedDefenseSkill = function() {
-	return this.getBaseDefenceSkill() + this.getDefenseSkillBonusFromTalents();
+	return this.getBaseDefenseSkill() + this.getDefenseSkillBonusFromTalents();
 }
 
 /**
  * @see http://www.wowwiki.com/Dodge
  */
-Combatant.prototype.getBaseDefenceSkill = function() {
+Combatant.prototype.getBaseDefenseSkill = function() {
 	//TODO getBaseDefenceSkill from base value
-	return 100;
+	return 400;
 }
 
 /**
@@ -386,7 +442,6 @@ Combatant.prototype.getDefenseSkillBonusFromTalents = function() {
  * @see http://www.wowwiki.com/Dodge
  */
 Combatant.prototype.getUndiminishedAgility = function() {
-	//TODO getUndiminishedAgility based on base-agility and talents
 	return this.getBaseAgility() + this.getAbilityBonusFromTalents();
 }
 
@@ -493,8 +548,36 @@ Combatant.prototype.getBlockChanceFromTalents = function() {
 	//TODO impl Combatant getBlockChanceFromTalents
 	return 0;
 }
+
+/**
+ * Effective agilty from base-agility and talens, buffs, ect. 
+ *  
+ */
+Combatant.prototype.getAgility = function() {
+	//TODO getAgility needs agility-bonus from equipment and others 'sources' for additional agility 
+	return this.getBaseAgility() + this.getAbilityBonusFromTalents();
+}
+
+/**
+ * 
+ * See table under header 'Agility' in url.
+ * @see http://www.wowwiki.com/Critical_strike
+ *  
+ */
+Combatant.prototype.getAgilityCritRate = function() {
+	//TODO getAgilityCritRate by class and level
+	return 62.5;
+}
 	 
-	
+/**
+ * @see http://www.wowwiki.com/Critical_strike 
+ *  
+ */
+Combatant.prototype.getCritChance = function() {
+	//TODO get Combatant getCritChance based on agilit  
+	return 5;
+}
+//	
 
 //	13.8 	21.76 	45.25
 //
