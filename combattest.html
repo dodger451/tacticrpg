@@ -16,21 +16,7 @@
 
 	</body>
 	<script>
-		//
-		// TEST
-		//
-		var mob1 = new Combatant('Mob1');
 		
-		var mob2 = new Combatant('Mob2strong');
-		mob2._level=81;
-		mob2.setAttackWeapon(new Weapon(heavyMeleeWeaponConfig));
-		//todo: crate a rangeweapon
-		var mob3 = new Combatant('Mob3weak');
-		mob3._level=79;		
-		mob3.setAttackWeapon(new Weapon(defaultRangeWeaponConfig));
-		
-		var char1 = new Combatant('Char1');
-		char1.isMob = function() {return false;}
 		
 		//todo: crate a rangeweapon
 
@@ -83,16 +69,40 @@
 			return newContent;
 		}
 
+//
+		// TEST
+		//
+		
+		//todo: crate a rangeweapon
+		
+		
 		//init queue
 		turnQueue = PriorityQueue({
 			low : true
 		});
+		var mob4 = new Combatant('Mob2verystrong');
+		mob4._level=84;
+		turnQueue.push(mob4, 0);
+
 		//turnQueue = PriorityQueue();
+		var char1 = new Combatant('Char1');
+		char1.isMob = function() {return false;}
 		turnQueue.push(char1, 0);
+		
+		var mob1 = new Combatant('Mob1');
 		turnQueue.push(mob1, 0);
+		
+		var mob2 = new Combatant('Mob2strong');
+		mob2._level=81;
+		mob2.setAttackWeapon(new Weapon(heavyMeleeWeaponConfig));
 		turnQueue.push(mob2, 0);
+		
+		var mob3 = new Combatant('Mob3weak');
+		mob3._level=79;		
+		mob3.setAttackWeapon(new Weapon(defaultRangeWeaponConfig));
 		turnQueue.push(mob3, 0);
 
+		
 		//draw current queue
 		var newContent = renderQueue(turnQueue);
 		document.getElementById('prioQueue').innerHTML = newContent;

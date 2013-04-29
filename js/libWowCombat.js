@@ -111,7 +111,7 @@ Combatrules.prototype.getBlockChance = function(attacker, defender) {
  * @see http://www.wowwiki.com/Critical_strike
  */
 Combatrules.prototype.getCriticalHitChance = function(attacker, defender) {
-	var critModifier=0;//TODO 
+	var critModifier=0;
 	var attDiff = defender.getDefenseSkill() - attacker.getAttackSkill(); 
 	if (defender.isMob()) {
 		if (attDiff > 0) {
@@ -123,9 +123,17 @@ Combatrules.prototype.getCriticalHitChance = function(attacker, defender) {
 	return attacker.getCritChance() + critModifier;
 	
 }
+/**
+ * The chance of being hit by a crushing blow is:
+ * (Mob's Weapon Skill - Player's level-capped Defense Skill [mininum difference 20]) * 2% - 15% 
+ * where "Mob's Weapon Skill" is the mob's level * 5, 
+ * and "Player's level-capped Defense Skill" is the player's Defense skill (normally the player's level * 5). 
+ */
 Combatrules.prototype.getCrushingBlowChance = function(attacker, defender) {
-	return 5;
-	//TODO calc Combatrules.getCrushingBlowChance
+	if (!attacker.isMob() || (defender.getLevel() - attacker.getLevel() > -4)) {
+		return 0;
+	}
+	return Math.max(20, attacker.getAttackSkill() - defender.getDefenseSkill()) * 2 - 15;
 }
 
 Combatrules.prototype.getAutoAttackTable = function(attacker, defender) {
@@ -257,8 +265,7 @@ Combatant.prototype.setAttackWeapon = function(weapon) {
  * 
  */
 Combatant.prototype.getBaseAttackSkill = function() {
-	//TODO getBaseDefenceSkill from base value
-	return 400;
+	return this.getLevel()*5;
 }
 
 /**
@@ -273,8 +280,8 @@ Combatant.prototype.getAttackSkill = function() {
 		return this.getLevel() * 5;
 		//For Skull Bosses, the formula is your level plus 3, multiplied by 5
 	} else {
-		//console.log('returning getBaseAttackSkill...');
-		return this.getBaseAttackSkill(); //TODO calc Combatant.getAttackSkill		
+		return this.getBaseAttackSkill(); 
+		//TODO calc Combatant.getAttackSkill: add buff, equip...		
 	}
 }
 
@@ -286,11 +293,11 @@ Combatant.prototype.getDefenseSkill = function() {
 	if(this.isMob()) {
 		//Calculating a mob's Defense Skill or Attack Rating
 		//This is a rather simple formula. It is the Mob's level multiplied by 5
-		console.log('returning for "'+this.getId()+'" mobbased def for level ...' + this.getLevel() + '=' + (this.getLevel() * 5));
+		//console.log('returning for "'+this.getId()+'" mobbased def for level ...' + this.getLevel() + '=' + (this.getLevel() * 5));
 		return this.getLevel() * 5;
 		//For Skull Bosses, the formula is your level plus 3, multiplied by 5
 	} else {
-		console.log('returning getBaseDefenseSkill...');
+		//console.log('returning getBaseDefenseSkill...');
 		return this.getBaseDefenseSkill(); //TODO calc Combatant.getDefenseSkill
 		
 	}
@@ -424,8 +431,7 @@ Combatant.prototype.getUndiminishedDefenseSkill = function() {
  * @see http://www.wowwiki.com/Dodge
  */
 Combatant.prototype.getBaseDefenseSkill = function() {
-	//TODO getBaseDefenceSkill from base value
-	return 400;
+	return this.getLevel()*5;
 }
 
 /**
