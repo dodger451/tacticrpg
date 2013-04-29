@@ -20,11 +20,18 @@
 		// TEST
 		//
 		var mob1 = new Combatant('Mob1');
-		var mob2 = new Combatant('Mob2');
-		var mob3 = new Combatant('Mob3');
+		
+		var mob2 = new Combatant('Mob2strong');
+		mob2._level=81;
 		mob2.setAttackWeapon(new Weapon(heavyMeleeWeaponConfig));
 		//todo: crate a rangeweapon
+		var mob3 = new Combatant('Mob3weak');
+		mob3._level=79;		
 		mob3.setAttackWeapon(new Weapon(defaultRangeWeaponConfig));
+		
+		var char1 = new Combatant('Char1');
+		char1.isMob = function() {return false;}
+		
 		//todo: crate a rangeweapon
 
 		//prio-queue
@@ -57,18 +64,18 @@
 						//todo
 						newContent = newContent + 'BaseDodgeChance:' + b.toFixed(2) + '\n';
 						var t = defender.getDodgeChanceFromTalents();
-						newContent = newContent + '-DodgeChanceFromTalents:' + t.toFixed(2) + '\n';
+						//newContent = newContent + '-DodgeChanceFromTalents:' + t.toFixed(2) + '\n';
 						var ab = defender.getDodgeChanceFromBaseAgility();
 						
-						newContent = newContent + '-DodgeChanceFromBaseAgility:' + ab.toFixed(2) + '\n';
-						newContent = newContent + '--+ dodgeFromAgility: ' + (defender.getUndiminishedAgility() / defender.getAgilityDodgeRate()).toFixed(2) + '\n';						
+						//newContent = newContent + '-DodgeChanceFromBaseAgility:' + ab.toFixed(2) + '\n';
+						//newContent = newContent + '--+ dodgeFromAgility: ' + (defender.getUndiminishedAgility() / defender.getAgilityDodgeRate()).toFixed(2) + '\n';						
 						//newContent = newContent + '    = undiminishedAgility: ' + defender.getUndiminishedAgility().toFixed(2) + '\n';
 						//newContent = newContent + '      / agilityDodgeRate: ' + defender.getAgilityDodgeRate().toFixed(2) + '\n';
-						newContent = newContent + '--+ dodgeFromDefense: ' +(( defender.getUndiminishedDefenseSkill() - (defender.getLevel() * 5) * 0.04)/ defender.getAgilityDodgeRate()).toFixed(2) + '\n';
+						//newContent = newContent + '--+ dodgeFromDefense: ' +(( defender.getUndiminishedDefenseSkill() - (defender.getLevel() * 5) * 0.04)/ defender.getAgilityDodgeRate()).toFixed(2) + '\n';
 
 						var d = defender.getDiminishedDodgeChance();
 						//todo
-						newContent = newContent + '-DiminishedDodgeChance:' + d.toFixed(2) + '\n';
+						//newContent = newContent + '-DiminishedDodgeChance:' + d.toFixed(2) + '\n';
 
 						break;
 				}
@@ -81,6 +88,7 @@
 			low : true
 		});
 		//turnQueue = PriorityQueue();
+		turnQueue.push(char1, 0);
 		turnQueue.push(mob1, 0);
 		turnQueue.push(mob2, 0);
 		turnQueue.push(mob3, 0);
@@ -101,7 +109,7 @@
 			var defender = turnQueue.top();
 			//next one in queue is being attacked
 			// show dialog with attack info to confirm attack
-			var attackInfo = attacker.getId() + ': attack ' + defender.getId() + '?\n';
+			var attackInfo = attacker.getId() + ' attack ' + defender.getId() + '?\n';
 			attackInfo = attackInfo + renderAttackInfo(attacker, defender) + '\n';
 			if (!confirm(attackInfo)) {
 				return;
