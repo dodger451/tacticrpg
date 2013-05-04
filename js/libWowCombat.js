@@ -228,26 +228,126 @@ AttackTableBuilder.prototype.getTable = function() {
 //
 /// Combatant
 //
-function Combatant(id) {
+function Combatant(id, def) {
 	//TODO Combatant.constructor for character (rest attributes)
-	//create with dummy equipment
+
 	this._id = id;
-	this._level = 80;
+	
+	var definition = def || {};
+	this._level = definition.level || 80;
+	
+	//
+	// ATTRIBUTES
+	//
+	//Attributes are the basic building blocks for a character's combat ability. 
+	//These are often referred to as simply stats.
+	 
+	this.baseStrength = definition.baseStrength || 20;
+	this.baseAgility = definition.baseAgility || 20;
+	this.baseStamina = definition.baseStamina || 20;
+	this.baseIntellect = definition.baseIntellect || 20;
+	this.baseSpirit = definition.baseSpirit || 21;
+	
+	//create with dummy equipment
+	
 	this._currentAttackWeapon = new Weapon({
 		isMeleeWeapon : true,
 		maxDamage : 15,
 		minDamage : 10,
 		speed : 2.0
-	});
+	});	
 }
 
 Combatant.prototype.getId = function() {
 	return this._id;
 }
 
+/**
+ * @return int
+ */
 Combatant.prototype.getLevel = function() {
 	return this._level;
 }
+
+/**
+ * @return int
+ */
+Combatant.prototype.getBaseStrength = function() {
+	return this.baseStrength;
+}
+/**
+ * Effective
+ * 
+ * @return float
+ */
+Combatant.prototype.getStrength = function() {
+	//TODO Combatant getStrength add bonus from equipment and others 
+	return this.getBaseStrength() ;
+}
+
+/**
+ * @return int
+ */
+Combatant.prototype.getBaseAgility = function() {
+	return this.baseAgility;
+}
+/**
+ * Effective agilty from base-agility and talens, buffs, ect. 
+ *  
+ * @return float
+ */
+Combatant.prototype.getAgility = function() {
+	//TODO Combatant getAgility add bonus from equipment and others 
+	return this.getBaseAgility() + this.getAbilityBonusFromTalents();
+}
+
+/**
+ * @return int
+ */
+Combatant.prototype.getBaseStamina = function() {
+	return this.baseStamina;
+}
+
+/**
+ * @return float
+ */
+Combatant.prototype.getStamina = function() {
+	//TODO Combatant getStamina add bonus from equipment and others
+	return this.getBaseStamina();
+}
+
+/**
+ * @return int
+ */
+Combatant.prototype.getBaseIntellect = function() {
+	return this.baseIntellect;
+}
+
+
+/**
+ * @return float
+ */
+Combatant.prototype.getIntellect = function() {
+	//TODO Combatant getIntellect add bonus from equipment and others
+	return this.getBaseIntellect();
+}
+
+
+/**
+ * @return int
+ */
+Combatant.prototype.getBaseSpirit = function() {
+	return this.baseSpirit;
+}
+
+/**
+ * @return float
+ */
+Combatant.prototype.getSpirit = function() {
+	//TODO Combatant getBaseSpirit add bonus from equipment and others
+	return this.getBaseSpirit();
+}
+
 /**
  * if false it's a player
  */
@@ -298,13 +398,13 @@ Combatant.prototype.getDefenseSkill = function() {
 		//For Skull Bosses, the formula is your level plus 3, multiplied by 5
 	} else {
 		//console.log('returning getBaseDefenseSkill...');
-		return this.getBaseDefenseSkill(); //TODO calc Combatant.getDefenseSkill
+		return this.getBaseDefenseSkill(); //TODO calc Combatant.getDefenseSkill add bonus from equip, buffs, ect..
 		
 	}
 }
 Combatant.prototype.isDualWielding = function() {
 	return false;
-	//TODO calc Combatant.isDualWielding
+	//TODO calc Combatant.isDualWielding based on curretn equip
 }
 
 /**
@@ -451,14 +551,6 @@ Combatant.prototype.getUndiminishedAgility = function() {
 	return this.getBaseAgility() + this.getAbilityBonusFromTalents();
 }
 
-/**
- * @see http://www.wowwiki.com/Dodge
- */
-Combatant.prototype.getBaseAgility = function() {
-	//TODO getBaseAgility based on base-agility value
-	return 92;
-}
-
 
 /**
  * @see http://www.wowwiki.com/Dodge
@@ -555,14 +647,6 @@ Combatant.prototype.getBlockChanceFromTalents = function() {
 	return 0;
 }
 
-/**
- * Effective agilty from base-agility and talens, buffs, ect. 
- *  
- */
-Combatant.prototype.getAgility = function() {
-	//TODO getAgility needs agility-bonus from equipment and others 'sources' for additional agility 
-	return this.getBaseAgility() + this.getAbilityBonusFromTalents();
-}
 
 /**
  * 
