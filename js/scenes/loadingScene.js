@@ -5,15 +5,32 @@
  * @TODO loadingscreeen needs design.
  */
 loadingScene = function() {
-				Crafty.background("#000");
-				showLogo();
-				var startTime = new Date().getTime();
-				Crafty.load(images,
-					function() {
-						var timeLoading = new Date().getTime() - startTime;
+	if (typeof(resource) == "undefined" || typeof(resource.requiredImages) == "undefined") {
+		throw "resource not initialized";
+	}
+	Crafty.background("#020");
+	alert("start loading.");
+				
+	var startTime = new Date().getTime();
+	Crafty.load(resource.requiredImages||[],
+		function() {
+			var timeLoading = new Date().getTime() - startTime;
 
-						setTimeout(function() {
-							Crafty.scene("game");
-						}, Math.max(700 - timeLoading, 0));
-					});
-			}
+			setTimeout(function() {
+				alert("done loading, go o battlefield.");
+				Crafty.scene("battlefield");//TODO goto 'gamemenu'
+			}, Math.max(700 - timeLoading, 0));
+		});
+	var label = Crafty.e("2D, DOM, text").attr({w: 100, h: 20, x: 150, y: 120});
+	
+      //label.text("Loading")
+      //.css({"text-align": "center"});
+
+	//showLogo();
+	
+}
+
+showLogo = function() {
+	//TODO show logo while loading
+	
+}

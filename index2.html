@@ -20,6 +20,7 @@
 	<!-- scenes -->
 	<script src="js/scenes/battlefieldScene.js"></script>
 	<script src="js/scenes/loadingScene.js"></script>
+	<script src="js/scenes/attackScene.js"></script>
 	
 	<script>
 	window.onload = function() {
@@ -29,10 +30,13 @@
 			// Init canvas
 			Crafty.canvas.init();
 
+			//define required resource
+			resource = [];
+			resource.requiredImages = ['ball.png']
 			//setup scenes
-			Crafty.scene("loading", loadingScene());
-			Crafty.scene("battlefield", battlefieldScene());
-			
+			Crafty.scene("loading", loadingScene);
+			Crafty.scene("battlefield", battlefieldScene);
+			Crafty.scene("attack", attackScene);
 			// Start the "loading" scene
 			Crafty.scene("loading");
 		};
