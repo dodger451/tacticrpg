@@ -9,7 +9,6 @@ loadingScene = function() {
 		throw "resource not initialized";
 	}
 	Crafty.background("#020");
-	alert("start loading.");
 				
 	var startTime = new Date().getTime();
 	Crafty.load(resource.requiredImages||[],
@@ -23,14 +22,16 @@ loadingScene = function() {
 		});
 	var label = Crafty.e("2D, DOM, Text").attr({w: 100, h: 20, x: 150, y: 120}).textColor('#FF0000');
 	
-      label.text("Loading")
-           .css({"text-align": "center"});
-
+	label.text("Loading")
+       .css({"text-align": "center"});
+	
 	//showLogo();
 	
 }
 
 showLogo = function() {
+	label.text("Loading")
+       .css({"text-align": "center"});
 	//TODO show logo while loading
 	
 }

@@ -7,7 +7,8 @@
 battlefieldScene = function() {
 	Crafty.background("#010");
 	alert('battlefield. click to attack.');
-	Crafty.scene("attack");				
+	alert('battlefield. click to end turn.');
+	Crafty.scene("battlefield");				
 
 	//TODO show queue
 	//TODO temporary display button to execute next attack				
