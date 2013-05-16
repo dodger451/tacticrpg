@@ -21,10 +21,10 @@ loadingScene = function() {
 				Crafty.scene("battlefield");//TODO goto 'gamemenu'
 			}, Math.max(700 - timeLoading, 0));
 		});
-	var label = Crafty.e("2D, DOM, text").attr({w: 100, h: 20, x: 150, y: 120});
+	var label = Crafty.e("2D, DOM, Text").attr({w: 100, h: 20, x: 150, y: 120}).textColor('#FF0000');
 	
-      //label.text("Loading")
-      //.css({"text-align": "center"});
+      label.text("Loading")
+           .css({"text-align": "center"});
 
 	//showLogo();
 	
