@@ -3,7 +3,7 @@ BattleQueue = BaseEntity.extend({
 defaults: {
 	    'entity': null,
 	    'queue' : null,
-        'queueOffset' : {x:150, y:0},
+        'queueOffset' : {x:0, y:0},
     },
     initialize: function(){
     	
@@ -13,8 +13,9 @@ defaults: {
 		});
 
      	model.set({'queue' : queue });
-		var entity = Crafty.e("2D, DOM, Text, Mouse, Color")
-            .attr({x: 0, y: 10, z: 1000});
+		var entity = Crafty.e("2D, DOM, Text, Mouse, Draggable, Color")
+            .attr({x: 200, y: 10, h:200, w: 500, z: 1000})
+            .color('white');
      	model.set({'entity' : entity });
     },
     getQueue : function(){
@@ -33,42 +34,26 @@ defaults: {
 		}
     },
     push: function(cId, prio){
-    	console.log('push');
-    	 
-	    var queueLength = this.getQueue().getAll().length;
-	    //create new queueitem and render portrait view of character
 	    var newCharPortrait = new QueuePortrait({characterId: cId});
-
-
-		var colors = ["red", "blue", "green"];
-	    newCharPortrait.getEntity()
-			.color(colors[Crafty.math.randomInt(0,100)%colors.length]);//helper while boxes are not unique
-	    
         this.getEntity().attach(newCharPortrait.getEntity());
-
     	this.getQueue().push(newCharPortrait, prio);
 
-		//re-render queue
-		this.updateQueue();	
+		//TODO: add queueitem - entity for new character with animation shift other items + fadein 
+    	this.updateQueue();	
 	    
-
     	Crafty.trigger('QueuePush', {characterId:cId, prio:prio});
-    	//TODO: add queueitem - entity for new character with animation shift other items + fadein 
     	
     },
     pop: function(){
-    	
-    	console.log('push');
     	var prio = this.getQueue().topPriority();
-    	var charPortrait = this.getQueue().pop();
-        
-    	this.getQueue().addPriorityToAll(-1 * prio);    	
+    	var charPortrait = this.getQueue().pop();        
+    	this.getQueue().addPriorityToAll(-1 * prio);
+    	    	
     	var val = {character:charPortrait.get('characterId'), prio:prio};
     	
+		//TODO: remove queueitem - entity with animation fadeout + shift other items    	
     	this.getEntity().detach(charPortrait.getEntity());
 		charPortrait.remove();
-		//TODO: remove queueitem - entity with animation fadeout + shift other items    	
-		//re-render queue
 		this.updateQueue();
     	
     	Crafty.trigger('QueuePop', val);
@@ -88,8 +73,6 @@ defaults: {
 			offset += queueElements[i].object.getEntity()._w;
 		}
     }
-    
-    
 });
 
 QueuePortrait = BaseEntity.extend({
@@ -97,24 +80,30 @@ defaults: {
         'characterId' : null,
     },
     initialize: function(){
-    	
 	    var model = this;
-
      	model.set({'characterId' : this.attributes.characterId });
-		var entity = Crafty.e("2D, DOM, Text, Mouse, Color");//, MouseHover
-
-
+     	
+		//TODO get character model by id and render apopriate portrait
+		var entity = Crafty.e("2D, DOM, Mouse, Color");//, MouseHover
 	    entity
-            .text(model.get('characterId'))
-            .textColor('#ffffff')
-            .textFont({'size' : '24px', 'family': 'Arial'})
             .attr({w: 120, h:200})
             .bind('Click', function(){
-            	alert('i\'m ' + model.get('characterId'));
+            	alert('i\'m ' + sc[model.get('characterId')].get('name'));
             })
-            
+        var colors = ["red", "blue", "green"];
+	    entity.color(colors[Crafty.math.randomInt(0,100)%colors.length]);//helper while boxes are not unique
+	        
      	model.set({'entity' : entity });
      
+        var labelNamePadding = 5;
+        var labelName = Crafty.e("2D, DOM, Text")
+            .text(sc[model.get('characterId')].get('name'))
+            .textColor('#ffff11')
+            .textFont({'size' : '24px', 'family': 'Arial'})
+            //.attr({x:100,  y:310})
+        	.attr({x: entity._x + labelNamePadding,  y:entity._y +20, w: entity._w-(labelNamePadding*2), h:entity._h, z:1001})
+        entity.attach(labelName);
+    	model.set({'labelName' : labelName });
     } 
     
 });
