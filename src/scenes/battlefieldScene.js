@@ -11,16 +11,36 @@ Crafty.scene('battlefield',  function() {
 	
 	//when everything is loaded, run the main scene
 	require(elements, function() {	
-		infc['queue'] = new BattleQueue();
 		Crafty.background("#010");
-		var queue = Crafty.e('BattleQueue');
+		infc['queue'] = new BattleQueue();
+		
+		var pushButtonEntity = Crafty.e("2D, DOM, Text, Mouse, Color");//, MouseHover
+	    pushButtonEntity
+            .attr({x: 0, y: 10, z: 1000, w: 100, h:100})
+            .text('push')
+            .textColor('#ffffff')
+            .textFont({'size' : '24px', 'family': 'Arial'})
+            .bind('Click', function(){
+            	var newCharId = 'char' + Crafty.math.randomInt(0,100);
+            	infc['queue'].push(newCharId, Crafty.math.randomInt(0,10));
+            })
+            .color("red");
+		
+		var popButtonEntity = Crafty.e("2D, DOM, Text, Mouse, Color");//, MouseHover
+	    popButtonEntity
+            .attr({x: 0, y: 120 , z: 1000, w: 100, h:100})
+            .text('pop')
+            .textColor('#ffffff')
+            .textFont({'size' : '24px', 'family': 'Arial'})
+            .bind('Click', function(){
+            	infc['queue'].pop();
+            })
+            .color("yellow");
+
+		
+	//TODO temporary display button to execute next attack				
 
 	
 	});
-	//alert('battlefield. click to attack.');
-	//alert('battlefield. click to end turn.');
-	//Crafty.scene("battlefield");				
-
-	//TODO show queue
-	//TODO temporary display button to execute next attack				
+	
 });

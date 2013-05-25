@@ -3,11 +3,7 @@ BattleQueue = BaseEntity.extend({
 defaults: {
 	    'entity': null,
 	    'queue' : null,
-        'queueOffset' : {x:100, y:0},
-        'pushButtonEntity': null,
-	    'popButtonEntity': null,
-	    'pushButtonOffset' : {x:0, y:0},
-	    'popButtonOffset' : {x:0, y:100},
+        'queueOffset' : {x:150, y:0},
     },
     initialize: function(){
     	
@@ -20,29 +16,6 @@ defaults: {
 		var entity = Crafty.e("2D, DOM, Text, Mouse, Color")
             .attr({x: 0, y: 10, z: 1000});
      	model.set({'entity' : entity });
-
-		var pushButtonEntity = Crafty.e("2D, DOM, Text, Mouse, Color");//, MouseHover
-	    pushButtonEntity
-            .attr({x: entity._x + this.get('pushButtonOffset').x, y: entity._y + this.get('pushButtonOffset').y, z: 1000, w: 100, h:100})
-            .text('push: ' + this.getQueue().getAll().length)
-            .textColor('#ffffff')
-            .textFont({'size' : '24px', 'family': 'Arial'})
-            .bind('Click', function(){
-            	//model.getQueue().push({name: 'randolf'}, 10);
-            	model.push({name: 'randolf'}, Crafty.math.randomInt(0,10));
-            	//Crafty.scene("battlefield");  
-            })
-            .bind('QueuePush', function (update) {
-            	this.text('push: ' + model.getQueue().getAll().length);
-            })
-            .bind('QueuePop', function (update) {
-            	this.text('push: ' + model.getQueue().getAll().length);
-            })
-            .color("red");
-		this.getEntity().attach(pushButtonEntity);
-     	
-     	model.set({'pushButtonEntity' :  pushButtonEntity});
-
     },
     getQueue : function(){
     	return this.get('queue');
@@ -59,13 +32,12 @@ defaults: {
 			queueElements[i].remove();
 		}
     },
-    push: function(characterId, prio){
+    push: function(cId, prio){
     	console.log('push');
     	 
 	    var queueLength = this.getQueue().getAll().length;
 	    //create new queueitem and render portrait view of character
-	    var newCharId = 'char' + queueLength;
-	    var newCharPortrait = new QueuePortrait({characterId: newCharId});
+	    var newCharPortrait = new QueuePortrait({characterId: cId});
 
 
 		var colors = ["red", "blue", "green"];
@@ -80,7 +52,7 @@ defaults: {
 		this.updateQueue();	
 	    
 
-    	Crafty.trigger('QueuePush', {characterId:newCharId, prio:prio});
+    	Crafty.trigger('QueuePush', {characterId:cId, prio:prio});
     	//TODO: add queueitem - entity for new character with animation shift other items + fadein 
     	
     },
@@ -133,7 +105,7 @@ defaults: {
 
 
 	    entity
-            .text('char: ' + model.get('characterId'))
+            .text(model.get('characterId'))
             .textColor('#ffffff')
             .textFont({'size' : '24px', 'family': 'Arial'})
             .attr({w: 120, h:200})
