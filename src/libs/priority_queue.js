@@ -151,7 +151,7 @@
       },
       
       getAll: function() {
-      	console.log('getAll invoked');
+      	//console.log('getAll invoked');
       	if(!sorted) {
         	console.log('getAll sorts');
       	  	sort();
