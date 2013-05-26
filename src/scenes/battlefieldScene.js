@@ -37,6 +37,7 @@ Crafty.scene('battlefield',  function() {
             .color("yellow");
 
 		
+
 	//TODO temporary display button to execute next attack				
 
 	
@@ -54,7 +55,7 @@ function addCharacter(c) {
 
 function generateRandomChar() {
 	var names = ['David', 'Luis', 'Mark', 'Fabian', 'Fritz', 'Max', 'Moritz', 'Mika', 'Mario'];
-	var lastnames = ['Gomez', 'Boateng', 'Lewandowski', 'Ribery', 'Hummels', 'Robben', 'Lahm', 'Müller', 'Abba'];
+	var lastnames = ['Gomez', 'Boateng', 'Ribery', 'Hummels', 'Robben', 'Lahm', 'Müller', 'Abba'];
 	
 	var newCharId = 'char' + Crafty.math.randomInt(0,100);
     var c = new Character();

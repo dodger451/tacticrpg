@@ -172,6 +172,9 @@
           return undefined;
         }
       },
+      removeAtIdx: function(idx) {
+      	return contents.splice(idx, 1)[0].object;
+      }
 
       
       
