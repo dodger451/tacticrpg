@@ -7,7 +7,8 @@
 Crafty.scene('battlefield',  function() {
 	var elements = [
         "src/entities/Character.js",
-        "src/interfaces/BattleQueue.js"
+        "src/interfaces/BattleQueue.js",
+        "src/interfaces/MessageDialog.js"
 	];
 	
 	//when everything is loaded, run the main scene
@@ -36,7 +37,16 @@ Crafty.scene('battlefield',  function() {
             })
             .color("yellow");
 
-		
+		var msgButtonEntity = Crafty.e("2D, DOM, Text, Mouse, Color");//, MouseHover
+	    msgButtonEntity
+            .attr({x: 0, y: 240 , z: 1000, w: 100, h:100})
+            .text('msg')
+            .textColor('#ffffff')
+            .textFont({'size' : '24px', 'family': 'Arial'})
+            .bind('Click', function(){
+            	message("this is a message");
+            })
+            .color("blue");
 
 	//TODO temporary display button to execute next attack				
 
@@ -44,6 +54,11 @@ Crafty.scene('battlefield',  function() {
 	});
 	
 });
+
+function message(txt) {
+	infc['msg'] = new MessageDialog({text: txt, w:400, h:200, x:150, y:70});	
+//	infc['msg'].getEntity().attr({w:100, h:400});
+}
 
 function addCharacter(c) {
 	sc[c.get('characterId')] = c;
