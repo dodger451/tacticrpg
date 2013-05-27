@@ -2,36 +2,37 @@
 MessageDialog = BaseEntity.extend({
 defaults: {
 	    'entity': null,
-	    'textEntity': null,
+	    'bgEntity': null,
 	    'x':1,
 	    'y':2,
 	    'h':200,
 	    'w':400,
-	    'z':2000
+	    'z':2000,
+	    'onClose': null
     },
     initialize: function(){
-    	console.log('init MEssagebox with x: '+this.get('x')+', y: '+this.get('y')+', h:'+this.get('h')+', w: '+this.get('w')+', z: '+this.get('z'));
     	var model = this;
-		var entity = Crafty.e("2D, DOM, Mouse, Draggable, Color")
-            .attr({x: this.get('x'), y: this.get('y'), h:this.get('h'), w: this.get('w'), z: this.get('z')})
-            .color('blue');
-
-		var textEntity = Crafty.e("2D, DOM, Mouse, Text")
+		
+		var entity = Crafty.e("2D, DOM, Mouse, Text, Draggable")
             .attr({x: this.get('x'), y: this.get('y'), h:this.get('h'), w: this.get('w'), z: this.get('z')+1})
 //            .attr({x: entity._x, y: entity._y, h:entity._h, w: entity._w, z: entity._w+1})
             .textColor("ffffff")
             .text(this.get('text'));
             
-            
-        entity.attach(textEntity);
+        var bgEntity = Crafty.e("2D, DOM, Color")
+            .attr({x: this.get('x'), y: this.get('y'), h:this.get('h'), w: this.get('w'), z: this.get('z')})
+            .color('blue');
 
-            
-        textEntity.bind('Click', function(data){
-        	model.remove();
-        });
-        
-        model.set({'textEntity' : textEntity });
+		//animate? use http://craftyjs.com/api/Tween.html
+        entity.attach(bgEntity);
+
+
+        model.set({'bgEntity' : bgEntity });
      	model.set({'entity' : entity });
+     	
+	},
+	getBgEntity: function() {
+		return this.get('bgEntity');
 	},
     remove : function(){
         var entity = this.getEntity();
@@ -39,13 +40,10 @@ defaults: {
         if (entity){
             entity.destroy();
         }
-        
-        if (this.get('textEntity')){
-        	this.get('textEntity').destroy();
+        var bgEntity = this.getBgEntity;
+        if (bgEntity){
+        	bgEntity.destroy();
         }
-    },
-    setText: function(txt){
-    	model.get('textEntity').text(txt);
     }
     
 });
