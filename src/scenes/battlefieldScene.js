@@ -57,6 +57,10 @@ Crafty.scene('battlefield',  function() {
 
 function message(txt) {
 	infc['msg'] = new MessageDialog({text: txt, w:400, h:200, x:150, y:70});	
+	infc['msg'].getEntity().bind('Click', function(data){
+        	infc['msg'].remove();
+        	infc['msg'] =null;
+        });
 //	infc['msg'].getEntity().attr({w:100, h:400});
 }
 
