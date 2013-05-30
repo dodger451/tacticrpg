@@ -31,11 +31,7 @@ defaults: {
      	
      	//animate noth? use http://craftyjs.com/api/Tween.html
 
-     	model.afterInit();
      	
-	},
-	afterInit: function(){
-		//to extend
 	},
 	getBgEntity: function() {
 		return this.get('bgEntity');
