@@ -114,6 +114,7 @@ defaults: {
      	model.set({'entity' : entity });
      
         var labelNamePadding = 5;
+        var labelHealthPadding = 5;
         var labelName = Crafty.e("2D, DOM, Text")
             .text(c.get('name'))
             .textColor('#ffff11')
@@ -121,13 +122,29 @@ defaults: {
             //.attr({x:100,  y:310})
         	.attr({
         		x: entity._x + labelNamePadding,  
-        		y: entity._y +20, 
-        		w: entity._w-(labelNamePadding*2), 
+        		y: entity._y + labelNamePadding, 
+        		w: entity._w - (labelNamePadding*2), 
         		h: entity._h, 
         		z: 1001
         		})
         entity.attach(labelName);
     	model.set({'labelName' : labelName });
+    	
+    	var labelHealth = Crafty.e("2D, DOM, Text")
+            .text('health: ' + c.c().getCurrentHealth() + ' / ' + c.c().getHealth())
+            .textColor('#ffff11')
+            .textFont({'size' : '12px', 'family': 'Arial'})
+            //.attr({x:100,  y:310})
+        	.attr({
+        		x: entity._x + labelHealthPadding,  
+        		y: entity._y + entity._h - (labelHealthPadding+12), 
+        		w: entity._w-(labelHealthPadding*2), 
+        		h: entity._h, 
+        		z: 1001
+        		})
+        entity.attach(labelHealth);
+    	model.set({'labelHealth' : labelHealth });
+    	
     } 
     
 });

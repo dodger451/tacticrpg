@@ -17,7 +17,6 @@ Crafty.scene('battlefield',  function() {
 		Crafty.background("#010");
 		infc['queue'] = new BattleQueue();
 		
-		
 		var btnPush = new ButtonDialog({x: 0, y: 10 , text:"push", z:1000});
 		btnPush.getEntity().bind("Click", function(){
 			addCharacter(generateRandomChar());

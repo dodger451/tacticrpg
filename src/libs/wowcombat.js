@@ -236,6 +236,10 @@ function Combatant(id, def) {
 	var definition = def || {};
 	this._level = definition.level || 80;
 	
+	this.currentHealth = definition.currentHealth || 100;
+	this.baseHealth = definition.baseHealth || 100;
+	this.currentMana = definition.currentMana || 100;
+	this.baseMana = definition.baseMana || 100;
 	//
 	// ATTRIBUTES
 	//
@@ -268,6 +272,56 @@ Combatant.prototype.getId = function() {
 Combatant.prototype.getLevel = function() {
 	return this._level;
 }
+
+/**
+ * current health
+ * @return int
+ */
+Combatant.prototype.getCurrentHealth = function() {
+	return this.currentHealth;
+}
+
+/**
+ * base max health
+ * @return int
+ */
+Combatant.prototype.getBaseHealth = function() {
+	return this.baseHealth;
+}
+/**
+ * Effective max health
+ * 
+ * @return int
+ */
+Combatant.prototype.getHealth = function() {
+	//TODO Combatant getHealth add bonus from equipment and others 
+	return this.getBaseHealth() ;
+}
+/**
+ * current Mana
+ * @return int
+ */
+Combatant.prototype.getCurrentMana = function() {
+	return this.currentMana;
+}
+
+/**
+ * base max Mana
+ * @return int
+ */
+Combatant.prototype.getBaseMana = function() {
+	return this.baseMana;
+}
+/**
+ * Effective max Mana
+ * 
+ * @return int
+ */
+Combatant.prototype.getMana = function() {
+	//TODO Combatant getMana add bonus from equipment and others 
+	return this.getBaseMana() ;
+}
+
 
 /**
  * @return int

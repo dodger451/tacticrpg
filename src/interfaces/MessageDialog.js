@@ -7,7 +7,7 @@ defaults: {
 	    'y':2,
 	    'h':200,
 	    'w':400,
-	    'z':2000
+	    'z':2000,
     },
     initialize: function(){
     	var model = this;
