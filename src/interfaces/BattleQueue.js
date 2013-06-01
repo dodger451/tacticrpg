@@ -18,8 +18,8 @@ defaults: {
             .color('white');
             
         entity.bind('QueuePortraitClicked', function(data){
-        	sc[data.characterId].set({'currentHealth':12});
-        	//model.removeCharacter(data.characterId);
+        	//sc[data.characterId].set({'currentHealth':12});
+        	model.removeCharacter(data.characterId);
         });
      	model.set({'entity' : entity });
     },
@@ -154,10 +154,10 @@ defaults: {
     	
     },
     getLabelNameEntity : function(){
-    	return model.get('labelName');
+    	return this.get('labelName');
     },
     getLabelHealthEntity : function(){
-    	return model.get('labelHealth');
+    	return this.get('labelHealth');
     },
     remove : function(){
         var entity = this.getLabelNameEntity();
