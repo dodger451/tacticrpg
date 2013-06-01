@@ -24,7 +24,14 @@ Character = BaseEntity.extend({
 		'baseHealth': 100,
 		'currentMana': 100,
 		'baseMana': 80,
-		'c':null
+		'c':null,
+		'agility':10,
+		'stamina':10,
+		'intellect':10,
+		'spirit':10,
+		'isMob':true,
+		'attackWeapon':null,//TODO check if better default possible
+		'level':1,
 
 	},
 	initialize: function() {
@@ -37,6 +44,8 @@ Character = BaseEntity.extend({
 	},
 	createCombatant: function(){
 		var c = new Combatant();
+		
+		//override methods
 		c.model = this;
 		c.getCurrentHealth = function() {
 			return this.model.get('currentHealth');
@@ -50,6 +59,36 @@ Character = BaseEntity.extend({
 		c.getBaseMana = function() {
 			return this.model.get('baseMana');
 		};
+	
+		c.getBaseAgility = function() {
+			return this.model.get('agility');
+		}
+		c.getBaseStamina = function() {
+			return this.model.get('stamina');
+		}
+		c.getBaseIntellect = function() {
+			return this.model.get('intellect');
+		}
+		c.getBaseSpirit = function() {
+			return this.model.get('spirit');
+		}
+		c.isMob = function() {
+			return this.model.get('isMob');
+		}
+		c.getAttackWeapon = function() {
+			return this.model.get('attackWeapon');
+		}
+		c.getLevel = function() {
+			return this.model.get('level');
+		}
+		
+		
+		
+		
+		
+		
+		
+		
 		return c;
 	} 
 	

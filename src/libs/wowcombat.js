@@ -411,10 +411,6 @@ Combatant.prototype.isMob = function() {
 Combatant.prototype.getAttackWeapon = function() {
 	return this._currentAttackWeapon;
 }
-Combatant.prototype.setAttackWeapon = function(weapon) {
-	this._currentAttackWeapon = weapon;
-}
-
 /**
  * 
  */

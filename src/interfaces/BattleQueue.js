@@ -18,7 +18,8 @@ defaults: {
             .color('white');
             
         entity.bind('QueuePortraitClicked', function(data){
-        	model.removeCharacter(data.characterId);
+        	sc[data.characterId].set({'currentHealth':12});
+        	//model.removeCharacter(data.characterId);
         });
      	model.set({'entity' : entity });
     },
@@ -145,6 +146,34 @@ defaults: {
         entity.attach(labelHealth);
     	model.set({'labelHealth' : labelHealth });
     	
+    	c.on("change", function(charModel){
+    		
+        	model.get("labelName").text(charModel.get("name"));	
+        	model.get("labelHealth").text('health: ' + charModel.c().getCurrentHealth() + ' / ' + charModel.c().getHealth());	
+      });
+    	
+    },
+    getLabelNameEntity : function(){
+    	return model.get('labelName');
+    },
+    getLabelHealthEntity : function(){
+    	return model.get('labelHealth');
+    },
+    remove : function(){
+        var entity = this.getLabelNameEntity();
+        if (entity){
+            entity.destroy();
+        }
+        var entity = this.getLabelHealthEntity();
+        if (entity){
+            entity.destroy();
+        }
+        var entity = this.getEntity();
+        if (entity){
+            entity.destroy();
+        }
+        
+        
     } 
     
 });

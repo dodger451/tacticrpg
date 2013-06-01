@@ -62,5 +62,6 @@ function generateRandomChar() {
     c.set({'characterId': newCharId});
     c.set({'name': names[Crafty.math.randomInt(0,names.length-1)] + ' ' +lastnames[Crafty.math.randomInt(0,lastnames.length-1)]});
     
+    
     return c;
 }
