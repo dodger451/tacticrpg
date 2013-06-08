@@ -9,6 +9,7 @@ Crafty.scene('battlefield',  function() {
         "src/entities/Character.js",
         "src/interfaces/BattleQueue.js",
        "src/interfaces/MessageDialog.js",
+       "src/interfaces/AttackConfirmDialog.js",
        "src/interfaces/ButtonDialog.js"
 	];
 	
@@ -28,7 +29,17 @@ Crafty.scene('battlefield',  function() {
             });				
 		var btnTestMsg = new ButtonDialog({x: 0, y: 240, text:"msg", z:1000});
 		btnTestMsg.getEntity().bind("Click", function(){
-			message("this is also message");
+			//message("this is also message");
+			
+			attTable = null;
+			var acd = new AttackConfirmDialog();
+			acd.set({'attackerName':'david',
+				'defenderName':'opfer',
+				'hitChance':78,
+				'attackAbilityName':'defaultattack',
+				'effectDescription': '12-15 health damage',
+				'attackTable':attTable});
+			infc['attackConfirmDialog'] = acd;
 		});
 		
 	

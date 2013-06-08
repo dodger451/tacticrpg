@@ -19,7 +19,8 @@ defaults: {
             
         entity.bind('QueuePortraitClicked', function(data){
         	//sc[data.characterId].set({'currentHealth':12});
-        	model.removeCharacter(data.characterId);
+        	//model.removeCharacter(data.characterId);
+        	model.attackCharacter(data.characterId);
         });
      	model.set({'entity' : entity });
     },
@@ -90,7 +91,22 @@ defaults: {
 				return;
 			}
 		}
+    },
+    attackCharacter: function(characterId){
+    	if (characterId === this.top().characterId) {
+    		console.log('top clicked: '+characterId);
+    		return;
+    	}
+    	var attacker = sc[this.top().characterId];
+    	var defender = sc[characterId];
+    	var attackType = 'autoattack';
+    	
+    	var result = ruleBook.getAutoAttackResult(attacker.c(), defender.c());
+    	 
+    	console.log('attck Character '+characterId);
+
     }
+    
 });
 
 QueuePortrait = BaseEntity.extend({
