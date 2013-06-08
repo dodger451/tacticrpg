@@ -8,9 +8,9 @@ Crafty.scene('battlefield',  function() {
 	var elements = [
         "src/entities/Character.js",
         "src/interfaces/BattleQueue.js",
-       "src/interfaces/MessageDialog.js",
-       "src/interfaces/AttackConfirmDialog.js",
-       "src/interfaces/ButtonDialog.js"
+       "src/interfaces/dialogs/MessageDialog.js",
+       "src/interfaces/dialogs/AttackConfirmDialog.js",
+       "src/interfaces/dialogs/ButtonDialog.js"
 	];
 	
 	//when everything is loaded, run the main scene
