@@ -210,7 +210,6 @@ Combatrules.prototype.attackResultToString = function(resulttype) {
 function AttackTableBuilder() {
 	this._lastMaxRole = 0;
 	this._attackTable = new Array();
-
 }
 
 AttackTableBuilder.prototype.add = function(pType, pChance) {

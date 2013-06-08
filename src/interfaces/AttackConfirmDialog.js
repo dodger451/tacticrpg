@@ -56,8 +56,7 @@ defaults: {
     updateContent: function() {
     	var ret = this.get('attackerName') + ' attacks ' + this.get('defenderName') + '<br/>\n';
     	ret += 'with ' + this.get('attackAbilityName') + '<br/>\n';
-    	ret += this.get('hitChance') + '%' + '<br/>\n';
-    	ret += this.get('effectDescription') + '<br/>\n';
+    	ret += this.get('hitChance').toFixed(2) + '% chance for ' + this.get('effectDescription') + '<br/>\n';
     	ret += '<br/>\n';
     	ret += this.getAttackTableDescription() ;
     	
@@ -73,10 +72,13 @@ defaults: {
 		var prev = 0;
 		var newContent='';
 		for (var i = 0; i < attackTable.length; i++) {
-			newContent = newContent 
-						+ ruleBook.attackResultToString(attackTable[i].type) + ':' 
+			absChance = (attackTable[i].maxrole - prev);
+			if (absChance>0) {
+				newContent = newContent 
+						+ ruleBook.attackResultToString(attackTable[i].type) + ': ' 
 						+ prev.toFixed(2) + ' - ' + attackTable[i].maxrole.toFixed(2) 
-						+ ' ('+(attackTable[i].maxrole - prev).toFixed(2)+'%)<br/>\n';
+						+ ' ('+absChance.toFixed(2)+'%)<br/>\n';
+			}
 			prev = attackTable[i].maxrole;
 		}
 		return newContent;

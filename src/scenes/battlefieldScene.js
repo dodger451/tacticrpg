@@ -16,30 +16,36 @@ Crafty.scene('battlefield',  function() {
 	//when everything is loaded, run the main scene
 	require(elements, function() {	
 		Crafty.background("#010");
-		infc['queue'] = new BattleQueue();
-		
+		var queue = new BattleQueue();
+		queue.getEntity().bind('QueuePortraitClicked', function(data){
+        	//sc[data.characterId].set({'currentHealth':12});
+        	//model.removeCharacter(data.characterId);
+        	var attacker = sc[infc['queue'].top().characterId];
+			var defender = sc[data.characterId];
+			
+        	attackCharacter(attacker, defender);
+        });
+        infc['queue'] = queue;
+        
+		//button to push a new randomw char in queue
 		var btnPush = new ButtonDialog({x: 0, y: 10 , text:"push", z:1000});
 		btnPush.getEntity().bind("Click", function(){
 			addCharacter(generateRandomChar());
             });				
 
+		//button to pop top char from queue
 		var btnPop = new ButtonDialog({x: 0, y: 120 , text:"pop", z:1000});
 		btnPop.getEntity().bind("Click", function(){
 			infc['queue'].pop();
-            });				
+            });
+            
+            				
+        //button for something
 		var btnTestMsg = new ButtonDialog({x: 0, y: 240, text:"msg", z:1000});
 		btnTestMsg.getEntity().bind("Click", function(){
 			//message("this is also message");
 			
-			attTable = null;
-			var acd = new AttackConfirmDialog();
-			acd.set({'attackerName':'david',
-				'defenderName':'opfer',
-				'hitChance':78,
-				'attackAbilityName':'defaultattack',
-				'effectDescription': '12-15 health damage',
-				'attackTable':attTable});
-			infc['attackConfirmDialog'] = acd;
+			
 		});
 		
 	
@@ -62,6 +68,43 @@ function addCharacter(c) {
 	//TODO add to strategic map
 }
 
+
+function attackCharacter(attacker, defender){
+	if (attacker.get('characterId') === defender.get('characterId')) {
+		return;
+	}
+	
+	var attackType = 'autoattack';
+	var ruleBook = new Combatrules();
+	var attackTable = ruleBook.getAutoAttackTable(attacker.c(), defender.c());
+	var maxMissChance = 0;
+	
+	for (var i = 0; i < attackTable.length; i++) {
+		if (attackTable[i].type == ruleBook.ATTACKRESULT_CRITICALHIT
+			|| attackTable[i].type == ruleBook.ATTACKRESULT_CRUSHING_BLOW
+			|| attackTable[i].type == ruleBook.ATTACKRESULT_ORDINARY_HIT
+			){
+			break;
+		}
+		maxMissChance = attackTable[i].maxrole;
+	}
+	var hitChance = 100 - maxMissChance;
+	
+	var acd = new AttackConfirmDialog();
+	acd.set({'attackerName':attacker.get('name'),
+		'defenderName':defender.get('name'),
+		'hitChance':hitChance,
+		'attackAbilityName':attackType,
+		'effectDescription': attacker.c().getMinDamage() + '- ' + attacker.c().getMaxDamage() +' health damage',
+		'attackTable':attackTable});
+	infc['attackConfirmDialog'] = acd;
+		
+	
+	//var result = ruleBook.getAutoAttackResult(attacker.c(), defender.c());
+	 
+	console.log('attck Character '+characterId);
+
+}
 //debug stuff
 
 function generateRandomChar() {
@@ -72,7 +115,10 @@ function generateRandomChar() {
     var c = new Character();
     c.set({'characterId': newCharId});
     c.set({'name': names[Crafty.math.randomInt(0,names.length-1)] + ' ' +lastnames[Crafty.math.randomInt(0,lastnames.length-1)]});
+    c.set({'name': names[Crafty.math.randomInt(0,names.length-1)] + ' ' +lastnames[Crafty.math.randomInt(0,lastnames.length-1)]});
     
+    var rndConfig = heavyMeleeWeaponConfig;//defaultMeleeWeaponConfig defaultRangeWeaponConfig
+    c.set({'attackWeapon':new Weapon(rndConfig)});
     
     return c;
 }
