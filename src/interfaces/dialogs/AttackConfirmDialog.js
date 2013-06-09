@@ -5,7 +5,7 @@ defaults: {
 	    'bgEntity': null,
 	    'x':270,
 	    'y':70,
-	    'h':200,
+	    'h':400,
 	    'w':400,
 	    'z':2000,
 	    'attackerName':'placeholder',
@@ -25,13 +25,25 @@ defaults: {
             
         var bgEntity = Crafty.e("2D, DOM, Color")
             .attr({x: this.get('x'), y: this.get('y'), h:this.get('h'), w: this.get('w'), z: this.get('z')})
-            .color('blue');
-        
+            .color("#4a1100");
         entity.attach(bgEntity);
 
+		var btnConfirm = new ButtonDialog({x: this.get('x')+280, y: this.get('y')+330, z: this.get('z')+1 , text:"attack"});
+        btnConfirm.getEntity().bind("Click", function(){
+			model.remove();
+		});
+		entity.attach(btnConfirm.getEntity());
+
+		var btnAbort = new ButtonDialog({x: this.get('x')+20, y: this.get('y')+330, z: this.get('z')+1 , text:"abort"});
+        btnAbort.getEntity().bind("Click", function(){
+			model.remove();
+		});
+		entity.attach(btnAbort.getEntity());
 		
      	model.set({'entity' : entity });
         model.set({'bgEntity' : bgEntity });
+		model.set({'btnConfirm' : btnConfirm });
+		model.set({'btnAbort' : btnAbort });
 
 		model.on("change", function(charModel){
 			this.updateContent();
@@ -41,6 +53,12 @@ defaults: {
 	},
 	getBgEntity: function() {
 		return this.get('bgEntity');
+	},
+	getBtnConfirm: function() {
+		return this.get('btnConfirm');
+	},
+	getBtnAbort: function() {
+		return this.get('btnAbort');
 	},
     remove : function(){
         var entity = this.getEntity();
@@ -52,6 +70,10 @@ defaults: {
         if (bgEntity){
         	bgEntity.destroy();
         }
+        var btnConfirm = this.getBtnConfirm();
+		btnConfirm.remove(); 
+		var btnAbort = this.getBtnAbort();
+		btnAbort.remove();        
     },
     updateContent: function() {
     	var ret = this.get('attackerName') + ' attacks ' + this.get('defenderName') + '<br/>\n';

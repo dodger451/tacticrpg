@@ -97,12 +97,19 @@ function attackCharacter(attacker, defender){
 		'attackAbilityName':attackType,
 		'effectDescription': attacker.c().getMinDamage() + '- ' + attacker.c().getMaxDamage() +' health damage',
 		'attackTable':attackTable});
+		
+	acd.getBtnConfirm().getEntity().bind("Click", function(){
+		console.log("execute attack on "+defender.get('name'));
+		var result = ruleBook.getAutoAttackResult(attacker.c(), defender.c());
+		console.log(result);
+
+	});	
 	infc['attackConfirmDialog'] = acd;
 		
 	
 	//var result = ruleBook.getAutoAttackResult(attacker.c(), defender.c());
 	 
-	console.log('attck Character '+characterId);
+	console.log('attck Character '+defender.get('characterId'));
 
 }
 //debug stuff

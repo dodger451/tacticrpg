@@ -17,7 +17,7 @@ defaults: {
    initialize: function(){
     	var model = this;
 		
-		var entity = Crafty.e("2D, DOM, Mouse, Text, Draggable")
+		var entity = Crafty.e("2D, DOM, Mouse, Text")
             .attr({x: this.get('x'), y: this.get('y'), h:this.get('h'), w: this.get('w'), z: this.get('z')+1})
 //            .attr({x: entity._x, y: entity._y, h:entity._h, w: entity._w, z: entity._w+1})
             .textColor("ffffff")
