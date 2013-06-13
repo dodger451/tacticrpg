@@ -38,19 +38,13 @@ Crafty.scene('battlefield',  function() {
 		btnPop.getEntity().bind("Click", function(){
 			infc['queue'].pop();
             });
-            
-            				
+                 				
         //button for something
 		var btnTestMsg = new ButtonDialog({x: 0, y: 240, text:"msg", z:1000});
 		btnTestMsg.getEntity().bind("Click", function(){
 			//message("this is also message");
-			
-			
 		});
-		
-	
 	});
-	
 });
 
 function message(txt) {
@@ -67,7 +61,6 @@ function addCharacter(c) {
     infc['queue'].push(c.get('characterId'), Crafty.math.randomInt(0,10));//TODO get start prio from char
 	//TODO add to strategic map
 }
-
 
 function attackCharacter(attacker, defender){
 	if (attacker.get('characterId') === defender.get('characterId')) {
@@ -101,6 +94,20 @@ function attackCharacter(attacker, defender){
 	acd.getBtnConfirm().getEntity().bind("Click", function(){
 		console.log("execute attack on "+defender.get('name'));
 		var result = ruleBook.getAutoAttackResult(attacker.c(), defender.c());
+		switch (result) {
+			case ruleBook.ATTACKRESULT_MISS:
+				console.log('Missed!');
+				break;
+			case ruleBook.ATTACKRESULT_DODGE:
+				console.log('Dodged!');
+				break;
+			case ruleBook.ATTACKRESULT_BLOCK:
+				console.log('Blocked!');
+				break;
+			case ruleBook.ATTACKRESULT_PARRY:
+				console.log('Parried!');
+				break;
+		}
 		console.log(result);
 
 	});	
