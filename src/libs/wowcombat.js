@@ -179,6 +179,31 @@ Combatrules.prototype.getAttackResult = function(attackTable) {
 	throw new Exception('unknown result for throw ' + rnd);
 }
 
+/**
+ * Returns effective damagereduction as percentage (0-100).
+ * 
+ * For enemies from level 1 to 59, the reduction to physical damage, as a percentage, is given by the following formula:
+ * %Reduction = (Armor / ([85 * Enemy_Level] + Armor + 400)) * 100
+ * 
+ * For enemies from level 60 and up, the reduction to physical damage, as a percentage, is given by the following formula:
+ * %Reduction = (Armor / ([467.5 * Enemy_Level] + Armor - 22167.5)) * 100
+ * 
+ * For level 80 and raid bosses, this simplifies to:
+ *  %Reduction for 80 = (Armor / (Armor + 15232.5)) * 100
+ *  %Reduction for 83 = (Armor / (Armor + 16635)) * 100
+ * 
+ * Note that the maximum damage reduction is capped at 75%.
+ * 
+ * @see http://www.wowwiki.com/Damage_reduction
+ */
+Combatrules.prototype.getDamageReduction = function(attacker, defender) {
+	var defenderArmor = defender.getArmor();
+	var attackerLevel = attacker.getLevel();
+	
+	var reduction = (defenderArmor / ((85 * attackerLevel) + defenderArmor + 400)) * 100;
+	return Math.min(75, reduction);
+}
+
 Combatrules.prototype.attackResultToString = function(resulttype) {
 
 	switch(resulttype) {
@@ -200,10 +225,24 @@ Combatrules.prototype.attackResultToString = function(resulttype) {
 			return 'ORDINARY HIT';
 		default:
 			return 'unknown result ' + result;
-
 	}
-
+	
 }
+
+Combatrules.prototype.rollDamage= function(attacker, defender) {
+	//var ruleBook = new Combatrules();
+	var result = this.getAutoAttackResult(attacker.c(), defender.c());
+	var reduction = this.getDamageReduction(attacker.c(), defender.c());
+	var minDmg = attacker.c().getMinDamage();
+	var maxDmg = attacker.c().getMaxDamage();
+	return  (1 - (reduction/100)) * this.between(minDmg, maxDmg); 
+}
+
+
+Combatrules.prototype.between= function(minDmg, maxDmg) {
+	return (minDmg + ((Crafty.math.randomInt(0,100)/ 100) * (maxDmg-minDmg)));
+}
+
 //
 ///AttackTableBuilder
 //
@@ -716,6 +755,34 @@ Combatant.prototype.getCritChance = function() {
 	//TODO get Combatant getCritChance based on agilit  
 	return 5;
 }
+/**
+ * Base Armor = 2 * Agility + gear armor + magic armor
+ * 
+ * @see http://www.wowwiki.com/Damage_reduction
+ *  
+ */
+Combatant.prototype.getArmor = function() {
+	return 2 * this.getAgility() + this.getArmorFromGear() + this.getArmorFromMagic();
+}
+/**
+ * 
+ * @see http://www.wowwiki.com/Armor
+ *  
+ */
+Combatant.prototype.getArmorFromGear = function() {
+	return 23;//TODO Combatant getArmorFromGear calc from gear
+}
+
+/**
+ * 
+ * @see http://www.wowwiki.com/Armor
+ *  
+ */
+Combatant.prototype.getArmorFromMagic = function() {
+	return 2;//TODO Combatant getArmorFromMagic calc from current effects
+}
+
+
 //	
 
 //	13.8 	21.76 	45.25
@@ -790,3 +857,10 @@ var defaultRangeWeaponConfig = {
 	damageType: "DAMAGETYPE_WHITE"
 }
 
+
+var armors = [
+		{itemId: 0, slotId:'armor', name: 'Casual cloth', armor: 1},
+		{itemId: 1, slotId:'armor', name: 'Heavy Lether outfit', armor: 3},
+		{itemId: 2, slotId:'armor', name: 'Ares Combat armor', armor: 10},
+		
+	] ;

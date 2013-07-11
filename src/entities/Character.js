@@ -81,6 +81,11 @@ Character = BaseEntity.extend({
 		c.getLevel = function() {
 			return this.model.get('level');
 		}
+
+		c.getArmorFromGear = function() {
+			var equip = this.model.get('itemSlots');
+			return armors[equip.armor].armor;
+		}
 		
 		
 		

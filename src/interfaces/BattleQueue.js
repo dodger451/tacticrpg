@@ -70,6 +70,9 @@ defaults: {
     	var offset = 0;
 		var queueElements = this.getQueue().getAll();
 		for (var i = 0; i < queueElements.length; i++) {
+			if(i==1) {
+				offset += 20;
+			}
 			queueElements[i].object.getEntity()
 				.attr({x: this.getEntity()._x + offset+ this.get('queueOffset').x, y: this.getEntity()._y + this.get('queueOffset').y, z: this.getEntity()._z+1})
 			offset += queueElements[i].object.getEntity()._w;
@@ -104,7 +107,6 @@ defaults: {
 	    entity
             .attr({w: 120, h:200})
             .bind('Click', function(){
-            	alert('i\'m ' + c.get('name'));
             	Crafty.trigger('QueuePortraitClicked', {characterId: c.get('characterId')});
             })
         var colors = ["red", "blue", "green"];

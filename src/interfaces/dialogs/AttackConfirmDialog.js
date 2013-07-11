@@ -1,6 +1,21 @@
-
+/**
+   Example:
+   var acd = new AttackConfirmDialog();
+	acd.set({'attackerName':'dave',
+		'defenderName':'orc',
+		'hitChance':10.32,
+		'attackAbilityName':'sword',
+		'effectDescription': '21 - 24 health damage',
+		'attackTable':attackTable});
+		
+	acd.getBtnConfirm().getEntity().bind("Click", function(){
+		executeAttack(attacker, defender);
+	});	
+ */
 AttackConfirmDialog = BaseEntity.extend({
 defaults: {
+	    'btnAbort':null,
+	    'btnConfirm':null,
 	    'entity': null,
 	    'bgEntity': null,
 	    'x':270,
