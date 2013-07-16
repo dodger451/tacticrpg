@@ -50,6 +50,11 @@ Character = BaseEntity.extend({
 		c.getCurrentHealth = function() {
 			return this.model.get('currentHealth');
 		};
+		Combatant.prototype.setCurrentHealth = function(newHealth) {
+			this.model.set('currentHealth', Math.max(0, Math.min(newHealth, this.getHealth())));			
+			return this;
+		}
+
 		c.getBaseHealth = function() {
 			return this.model.get('baseHealth');
 		};
@@ -81,18 +86,14 @@ Character = BaseEntity.extend({
 		c.getLevel = function() {
 			return this.model.get('level');
 		}
+		c.getId = function() {
+			return this.model.get('characterId');
+		}
 
 		c.getArmorFromGear = function() {
 			var equip = this.model.get('itemSlots');
 			return armors[equip.armor].armor;
 		}
-		
-		
-		
-		
-		
-		
-		
 		
 		return c;
 	} 

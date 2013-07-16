@@ -56,6 +56,7 @@ defaults: {
 		//TODO: remove queueitem - entity with animation fadeout + shift other items    	
     	this.getEntity().detach(charPortrait.getEntity());
 		charPortrait.remove();
+		
 		this.updateQueue();
     	
     	Crafty.trigger('QueuePop', val);
@@ -74,7 +75,14 @@ defaults: {
 				offset += 20;
 			}
 			queueElements[i].object.getEntity()
-				.attr({x: this.getEntity()._x + offset+ this.get('queueOffset').x, y: this.getEntity()._y + this.get('queueOffset').y, z: this.getEntity()._z+1})
+				.attr(
+					{
+						x: this.getEntity()._x + offset+ this.get('queueOffset').x, 
+						y: this.getEntity()._y + this.get('queueOffset').y, 
+						z: this.getEntity()._z+1
+						
+					})
+			queueElements[i].object.set({'prio': queueElements[i].priority});
 			offset += queueElements[i].object.getEntity()._w;
 		}
     },
@@ -97,6 +105,7 @@ defaults: {
 QueuePortrait = BaseEntity.extend({
 defaults: {
         'characterId' : null,
+        'prio':'nullnull'
     },
     initialize: function(){
 	    var model = this;
@@ -109,48 +118,85 @@ defaults: {
             .bind('Click', function(){
             	Crafty.trigger('QueuePortraitClicked', {characterId: c.get('characterId')});
             })
-        var colors = ["red", "blue", "green"];
-	    entity.color(colors[Crafty.math.randomInt(0,100)%colors.length]);//helper while boxes are not unique
+        entity.color(c.get('color'));//helper while boxes are not unique
 	        
      	model.set({'entity' : entity });
      
-        var labelNamePadding = 5;
-        var labelHealthPadding = 5;
+        var labelNamePadding = 5;//from top down
+        var labelArmorPadding = 45;//bottom up
+        var labelHealthPadding = 30;//bottom up
+        var labelPrioPadding = 15;//bottom up
+        var textcolor = '#000000';
+    	
+    
         var labelName = Crafty.e("2D, DOM, Text")
-            .text(c.get('name'))
-            .textColor('#ffff11')
+            .text('')
+            .textColor(textcolor)
             .textFont({'size' : '24px', 'family': 'Arial'})
             //.attr({x:100,  y:310})
         	.attr({
-        		x: entity._x + labelNamePadding,  
+        		x: entity._x + 5,  
         		y: entity._y + labelNamePadding, 
-        		w: entity._w - (labelNamePadding*2), 
+        		w: entity._w - 5, 
         		h: entity._h, 
         		z: 1001
         		})
         entity.attach(labelName);
     	model.set({'labelName' : labelName });
-    	
-    	var labelHealth = Crafty.e("2D, DOM, Text")
-            .text('health: ' + c.c().getCurrentHealth() + ' / ' + c.c().getHealth())
-            .textColor('#ffff11')
+
+    	var labelArmor = Crafty.e("2D, DOM, Text")
+            .text('')
+            .textColor(textcolor)
             .textFont({'size' : '12px', 'family': 'Arial'})
             //.attr({x:100,  y:310})
         	.attr({
-        		x: entity._x + labelHealthPadding,  
-        		y: entity._y + entity._h - (labelHealthPadding+12), 
-        		w: entity._w-(labelHealthPadding*2), 
+        		x: entity._x + 5,  
+        		y: entity._y + entity._h - labelArmorPadding, 
+        		w: entity._w-5, 
+        		h: entity._h, 
+        		z: 1001
+        		})
+        entity.attach(labelArmor);
+    	model.set({'labelArmor' : labelArmor });
+
+    	
+    	var labelHealth = Crafty.e("2D, DOM, Text")
+            .text('')
+            .textColor(textcolor)
+            .textFont({'size' : '12px', 'family': 'Arial'})
+            //.attr({x:100,  y:310})
+        	.attr({
+        		x: entity._x + 5,  
+        		y: entity._y + entity._h - labelHealthPadding, 
+        		w: entity._w-5, 
         		h: entity._h, 
         		z: 1001
         		})
         entity.attach(labelHealth);
     	model.set({'labelHealth' : labelHealth });
-    	
-    	c.on("change", function(charModel){
     		
-        	model.get("labelName").text(charModel.get("name"));	
-        	model.get("labelHealth").text('health: ' + charModel.c().getCurrentHealth() + ' / ' + charModel.c().getHealth());	
-      });
+    	var labelPrio = Crafty.e("2D, DOM, Text")
+            .text('')
+            .textColor(textcolor)
+            .textFont({'size' : '12px', 'family': 'Arial'})
+            //.attr({x:100,  y:310})
+        	.attr({
+        		x: entity._x + entity._w/2 ,  
+        		y: entity._y + entity._h - labelPrioPadding, 
+        		w: entity._w-5, 
+        		h: entity._h, 
+        		z: 1001
+        		})
+        entity.attach(labelPrio);
+    	model.set({'labelPrio' : labelPrio });
+    		
+    	model.updateLabels(c);
+    	c.on("change", function(charModel){
+    		model.updateLabels(charModel);
+	      });
+	    this.on("change", function(queuePortraitModel) {
+    		model.updateLabels(sc[queuePortraitModel.get('characterId')]);
+	      });  
     	
     },
     getLabelNameEntity : function(){
@@ -174,6 +220,15 @@ defaults: {
         }
         
         
-    } 
+    } ,
+    updateLabels: function(charModel) {
+       var model = this;	
+       model.get("labelName").text(charModel.get("name"));	
+       model.get("labelHealth").text('health: ' + Math.round(charModel.c().getCurrentHealth()) + ' / ' + Math.round(charModel.c().getHealth()));	
+	   model.get("labelArmor").text('armor: ' + Math.round(charModel.c().getArmor()));	
+	   model.get("labelPrio").text('' + this.get('prio'));
+	   
+	
+    }
     
 });

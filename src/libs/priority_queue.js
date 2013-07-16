@@ -160,22 +160,25 @@
       },
       
       topPriority: function() {
-        if(!sorted) {
+        return this.getPrioAtIdx(0);
+      },
+      removeAtIdx: function(idx) {
+      	return contents.splice(idx, 1)[0].object;
+      }
+	  ,
+      getPrioAtIdx: function(idx) {
+      	if(!sorted) {
           sort();
         }
 
-        var element = contents[0];
+        var element = contents[idx];
 
         if(element) {
           return element.priority;
         } else {
           return undefined;
         }
-      },
-      removeAtIdx: function(idx) {
-      	return contents.splice(idx, 1)[0].object;
       }
-
       
       
     };

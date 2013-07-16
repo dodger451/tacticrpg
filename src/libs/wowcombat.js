@@ -230,13 +230,13 @@ Combatrules.prototype.attackResultToString = function(resulttype) {
 }
 
 Combatrules.prototype.rollDamage= function(attacker, defender) {
-	//var ruleBook = new Combatrules();
-	var result = this.getAutoAttackResult(attacker.c(), defender.c());
-	var reduction = this.getDamageReduction(attacker.c(), defender.c());
-	var minDmg = attacker.c().getMinDamage();
-	var maxDmg = attacker.c().getMaxDamage();
+	var result = this.getAutoAttackResult(attacker, defender);
+	var reduction = this.getDamageReduction(attacker, defender);
+	var minDmg = attacker.getMinDamage();
+	var maxDmg = attacker.getMaxDamage();
 	return  (1 - (reduction/100)) * this.between(minDmg, maxDmg); 
 }
+
 
 
 Combatrules.prototype.between= function(minDmg, maxDmg) {
@@ -318,6 +318,20 @@ Combatant.prototype.getLevel = function() {
 Combatant.prototype.getCurrentHealth = function() {
 	return this.currentHealth;
 }
+
+Combatant.prototype.setCurrentHealth = function(newHealth) {
+	this.currentHealth = Math.max(0, Math.min(newHealth, this.getHealth()));
+	return this;
+}
+/**
+ * returns applied dmg (between 0 - getCurrentHealth())
+ */
+Combatant.prototype.applyHealthDamage = function(dmg) {
+	currentHealth = this.getCurrentHealth();
+	return currentHealth - this.setCurrentHealth(currentHealth - dmg).getCurrentHealth();
+}
+
+
 
 /**
  * base max health
@@ -835,6 +849,10 @@ Weapon.prototype.getDamageType = function() {
 	return this._config.damageType;
 }
 
+Weapon.prototype.getName = function() {
+	return this._config.name;
+}
+
 var defaultMeleeWeaponConfig = {
 	isMeleeWeapon : true,
 	maxDamage : 15,
@@ -856,6 +874,13 @@ var defaultRangeWeaponConfig = {
 	speed : 2.5,
 	damageType: "DAMAGETYPE_WHITE"
 }
+
+var weaponConfigs = [
+		{itemId: 0, slotId:'mainweapon', name: 'defaultMeleeWeapon', config: defaultMeleeWeaponConfig},
+		{itemId: 1, slotId:'mainweapon', name: 'heavyMeleeWeapon', config: heavyMeleeWeaponConfig},
+		{itemId: 2, slotId:'mainweapon', name: 'defaultRangeWeapon', config: defaultRangeWeaponConfig},
+		
+	] ;
 
 
 var armors = [

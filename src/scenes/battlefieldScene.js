@@ -123,6 +123,9 @@ function executeAttack(attacker, defender) {
 	console.log("execute attack on "+defender.get('name'));
 	//run attack
 	var ruleBook = new Combatrules();
+	var topQueueItem = infc['queue'].pop();
+
+	var attackerSpeed = attacker.c().getAttackSpeed();
 	var result = ruleBook.getAutoAttackResult(attacker.c(), defender.c());
 	
 	//result show
@@ -152,6 +155,10 @@ function executeAttack(attacker, defender) {
 			onOrdinaryHit(attacker, defender);
 			break;
 	}
+	console.log("put "+attacker.get('name') + ' back into queue with prio ' + attackerSpeed);
+	infc['queue'].push(attacker.get('characterId'), attackerSpeed);
+
+	
 }
 function onMiss(attacker, defender) {
 	console.log('Missed!');
@@ -171,7 +178,7 @@ function onBlock(attacker, defender) {
 }
 function onCriticalHit(attacker, defender) {
 	var ruleBook = new Combatrules();
-	var dmg = 2 * ruleBook.rollDamage(attacker, defender);
+	var dmg = 2 * ruleBook.rollDamage(attacker.c(), defender.c());
 	console.log('ATTACKRESULT_CRITICALHIT! Dmg: ' + dmg);//TODO ATTACKRESULT_CRITICALHIT	
 }
 function onCrushingBlow(attacker, defender) {
@@ -179,22 +186,30 @@ function onCrushingBlow(attacker, defender) {
 }
 
 function onOrdinaryHit(attacker, defender) {
+	//TODO: animate attackhit
 	var ruleBook = new Combatrules();
-	var dmg = ruleBook.rollDamage(attacker, defender); 
-	console.log('ATTACKRESULT_ORDINARY_HIT! Dmg: ' + dmg);//TODO ATTACKRESULT_ORDINARY_HIT
-	
+	var dmg = ruleBook.rollDamage(attacker.c(), defender.c()); 
+	var dmgApplied = defender.c().applyHealthDamage(dmg);
+	console.log('ATTACKRESULT_ORDINARY_HIT! Dmg: ' + dmg +' ('+dmgApplied+' apllied)');
 }
 //debug stuff
 function generateRandomChar() {
 	var names = ['David', 'Luis', 'Mark', 'Fabian', 'Fritz', 'Max', 'Moritz', 'Mika', 'Mario'];
 	var lastnames = ['Gomez', 'Boateng', 'Ribery', 'Hummels', 'Robben', 'Lahm', 'Müller', 'Abba'];
+	var colors = ['red', 'blue', 'yellow', 'green', 'orange'];
 	var newCharId = 'char' + Crafty.math.randomInt(0,100);
     var c = new Character();
     c.set({'characterId': newCharId});
     c.set({'name': names[Crafty.math.randomInt(0,names.length-1)] + ' ' +lastnames[Crafty.math.randomInt(0,lastnames.length-1)]});
-     c.set({'itemSlots':{'armor': armors[Crafty.math.randomInt(0,armors.length-1)].itemId}});
-    var rndConfig = heavyMeleeWeaponConfig;//defaultMeleeWeaponConfig defaultRangeWeaponConfig
+    c.set({'itemSlots':
+    	{
+    		'armor': armors[Crafty.math.randomInt(0,armors.length-1)].itemId,
+    		
+    	}
+    });
+    var rndConfig = weaponConfigs[Crafty.math.randomInt(0,weaponConfigs.length-1)].config;//defaultMeleeWeaponConfig defaultRangeWeaponConfig
     c.set({'attackWeapon':new Weapon(rndConfig)});
+    c.set({'color': colors[Crafty.math.randomInt(0,colors.length-1)]});
     
     return c;
 }
