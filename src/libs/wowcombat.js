@@ -858,27 +858,30 @@ var defaultMeleeWeaponConfig = {
 	maxDamage : 15,
 	minDamage : 10,
 	speed : 2.0,
-	damageType: "DAMAGETYPE_WHITE"
+	damageType: "DAMAGETYPE_WHITE", 
+	name: 'defaultMeleeWeapon'
 }
 var heavyMeleeWeaponConfig = {
 	isMeleeWeapon : true,
 	maxDamage : 30,
 	minDamage : 15,
 	speed : 3.0,
-	damageType: "DAMAGETYPE_WHITE"
+	damageType: "DAMAGETYPE_WHITE", 
+	name: 'heavyMeleeWeapon'
 }
 var defaultRangeWeaponConfig = {
 	isMeleeWeapon : false,
 	maxDamage : 20,
 	minDamage : 15,
 	speed : 2.5,
-	damageType: "DAMAGETYPE_WHITE"
+	damageType: "DAMAGETYPE_WHITE",
+	name: 'defaultRangeWeapon'
 }
 
 var weaponConfigs = [
-		{itemId: 0, slotId:'mainweapon', name: 'defaultMeleeWeapon', config: defaultMeleeWeaponConfig},
-		{itemId: 1, slotId:'mainweapon', name: 'heavyMeleeWeapon', config: heavyMeleeWeaponConfig},
-		{itemId: 2, slotId:'mainweapon', name: 'defaultRangeWeapon', config: defaultRangeWeaponConfig},
+		{itemId: 0, slotId:'mainweapon', config: defaultMeleeWeaponConfig},
+		{itemId: 1, slotId:'mainweapon', config: heavyMeleeWeaponConfig},
+		{itemId: 2, slotId:'mainweapon', config: defaultRangeWeaponConfig},
 		
 	] ;
 

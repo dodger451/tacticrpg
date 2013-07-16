@@ -214,6 +214,10 @@ defaults: {
         if (entity){
             entity.destroy();
         }
+        var entity = this.get('labelPrio');
+        if (entity){
+            entity.destroy();
+        }
         var entity = this.getEntity();
         if (entity){
             entity.destroy();

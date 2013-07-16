@@ -28,6 +28,8 @@ defaults: {
 	    'hitChance':'placeholder',
 	    'attackAbilityName':'placeholder',
 	    'effectDescription':'placeholder',
+	    'defenseDescription':'placeholder',
+	    'attackDuration':'placeholder',
 	    'attackTable':'placeholder',
     },
     initialize: function(){
@@ -93,7 +95,10 @@ defaults: {
     updateContent: function() {
     	var ret = this.get('attackerName') + ' attacks ' + this.get('defenderName') + '<br/>\n';
     	ret += 'with ' + this.get('attackAbilityName') + '<br/>\n';
-    	ret += this.get('hitChance').toFixed(2) + '% chance for ' + this.get('effectDescription') + '<br/>\n';
+    	ret += '&nbsp;&nbsp;&nbsp;defense: ' + this.get('defenseDescription') + 's<br/>\n';
+    	ret += '&nbsp;&nbsp;&nbsp;effect:' + this.get('effectDescription') + '<br/>\n';
+    	ret += '&nbsp;&nbsp;&nbsp;chance:' + this.get('hitChance').toFixed(2) + '% <br/>\n';
+    	ret += '&nbsp;&nbsp;&nbsp;time: ' + this.get('attackDuration') + 's<br/>\n';
     	ret += '<br/>\n';
     	ret += this.getAttackTableDescription() ;
     	

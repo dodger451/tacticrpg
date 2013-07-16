@@ -81,6 +81,9 @@ function attackCharacter(attacker, defender){
 	}
 	
 	var attackType = 'autoattack';
+	var attackWeaponName= attacker.c().getAttackWeapon().getName() ;
+	console.log(attacker.c().getAttackWeapon());
+	console.log(attacker.c().getAttackWeapon().getName());
 	var ruleBook = new Combatrules();
 	var attackTable = ruleBook.getAutoAttackTable(attacker.c(), defender.c());
 	var maxMissChance = 0;
@@ -101,10 +104,12 @@ function attackCharacter(attacker, defender){
 	
 	var acd = new AttackConfirmDialog();
 	acd.set({'attackerName':attacker.get('name'),
-		'defenderName':defender.get('name') + ' (armor '+ defender.c().getArmor() + ', '+defender.c().getArmorFromGear()+' from gear)',
+		'defenderName':defender.get('name'),
+		'defenseDescription': defender.c().getArmor() + ' armor',
 		'hitChance':hitChance,
-		'attackAbilityName':attackType,
-		'effectDescription': minDmg.toFixed(0) + '- ' + maxDmg.toFixed(0)  +' health damage ('+reduction+' reduction)',
+		'attackDuration':attacker.c().getAttackSpeed(),
+		'attackAbilityName':attackType + '(' + attackWeaponName+ ')',
+		'effectDescription': minDmg.toFixed(0) + '- ' + maxDmg.toFixed(0)  + ' health damage',
 		'attackTable':attackTable});
 		
 	acd.getBtnConfirm().getEntity().bind("Click", function(){
