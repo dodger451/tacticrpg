@@ -114,10 +114,15 @@ function attackCharacter(attacker, defender){
 		
 	acd.getBtnConfirm().getEntity().bind("Click", function(){
 		executeAttack(attacker, defender);
+		//checkWinCondition();
+		proceedQueue();
 	});	
 	infc['attackConfirmDialog'] = acd;
 }
 
+function proceedQueue() {
+	infc['queue'].proceed();
+}
 /**
  * Runs attack after player confrmed  in attack-dialog
  * 

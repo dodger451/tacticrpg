@@ -67,6 +67,12 @@ defaults: {
     	var charPortrait = this.getQueue().top();
     	return {characterId:charPortrait.get('characterId'), prio:prio};
     },
+    proceed: function(){
+    	var prio = this.getQueue().topPriority();
+    	this.getQueue().addPriorityToAll(-1 * prio);
+    	this.updateQueue();
+    	
+    },
     updateQueue: function(){
     	var offset = 0;
 		var queueElements = this.getQueue().getAll();
