@@ -96,7 +96,10 @@ Character = BaseEntity.extend({
 		}
 		
 		return c;
-	} 
+	},
+	isAlive: function() {
+		return 0 < this.get('currentHealth');
+	}, 
 	
  
 

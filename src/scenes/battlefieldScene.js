@@ -52,6 +52,11 @@ Crafty.scene('battlefield',  function() {
  * 
  */
 function message(txt) {
+	if(infc['msg'] != null) {
+		infc['msg'].remove();
+        infc['msg'] =null;
+	}
+			
 	infc['msg'] = new MessageDialog({text: txt, w:400, h:200, x:150, y:70});	
 	infc['msg'].getEntity().bind('Click', function(data){
         	infc['msg'].remove();
@@ -114,10 +119,57 @@ function attackCharacter(attacker, defender){
 		
 	acd.getBtnConfirm().getEntity().bind("Click", function(){
 		executeAttack(attacker, defender);
-		//checkWinCondition();
+		checkWinCondition();
 		proceedQueue();
 	});	
 	infc['attackConfirmDialog'] = acd;
+}
+
+
+function checkWinCondition() {
+	var winner = null;
+
+	winner  = getWinnerBySoleSurvivor();
+	
+	if (null != winner) {
+		message('Game ends, winner is ' + winner);
+		infc['msg'].getEntity().bind('Click', function(data){
+        	alert('todo: goto next scene')
+        });
+	}
+}
+
+function getWinnerBySoleSurvivor() {
+	var factions = [];
+	console.log(sc.length + ' cahrs found');
+    console.log(sc);
+    for (var charId in sc) {
+		if (sc.hasOwnProperty(charId)) {
+		    var character = sc[charId];
+		    
+		 
+			console.log(character.get('name') + ' has color ' + character.get('color'));
+			if(character.isAlive()) {
+				var color = character.get('color');
+				console.log(character.get('name') + ' is alive with color ' + color);
+			    if(-1 == factions.indexOf(color)){
+			  		factions.push(color); 
+			    }
+			} else {
+				console.log(character.get('name') + ' is dead!');
+			}
+	    	
+	        
+	    }
+	}   
+    if (factions.length === 1) {
+    	return factions[0];
+    }
+    if (factions.length === 0) {
+    	console.log('no living players found!');
+    	return 'draw';
+    }
+    return null;
 }
 
 function proceedQueue() {
@@ -171,27 +223,37 @@ function executeAttack(attacker, defender) {
 	
 }
 function onMiss(attacker, defender) {
+	message('Missed!');
+	
 	console.log('Missed!');
 }
 function onDodge(attacker, defender) {
+	message('Dodged!');
 	console.log('Dodge!');
 }
 function onParry(attacker, defender) {
+	message('Parried');
 	console.log('Parry!');
 }
 function onGlancingBlow(attacker, defender) {
+	message('todo: Glancing blow' );
 	console.log('GlancingBlow!');
 }
 			
 function onBlock(attacker, defender) {
+	message('Blocked!');
 	console.log('Blocked!');
 }
 function onCriticalHit(attacker, defender) {
 	var ruleBook = new Combatrules();
 	var dmg = 2 * ruleBook.rollDamage(attacker.c(), defender.c());
+	var dmgApplied = defender.c().applyHealthDamage(dmg);
+	message('CRITICAL! ' + dmgApplied + ' damage to ' + defender.get('name'));
+	
 	console.log('ATTACKRESULT_CRITICALHIT! Dmg: ' + dmg);//TODO ATTACKRESULT_CRITICALHIT	
 }
 function onCrushingBlow(attacker, defender) {
+	message('todo: crushing blow' );
 	console.log('CrushingBlow todo');
 }
 
@@ -200,6 +262,7 @@ function onOrdinaryHit(attacker, defender) {
 	var ruleBook = new Combatrules();
 	var dmg = ruleBook.rollDamage(attacker.c(), defender.c()); 
 	var dmgApplied = defender.c().applyHealthDamage(dmg);
+	message('Hit! '+dmgApplied + ' damage to ' + defender.get('name'));
 	console.log('ATTACKRESULT_ORDINARY_HIT! Dmg: ' + dmg +' ('+dmgApplied+' apllied)');
 }
 //debug stuff
