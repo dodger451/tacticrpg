@@ -245,7 +245,7 @@ function onCriticalHit(attacker, defender) {
 	var ruleBook = new Combatrules();
 	var dmg = 2 * ruleBook.rollDamage(attacker.c(), defender.c());
 	var dmgApplied = defender.c().applyHealthDamage(dmg);
-	message('CRITICAL! ' + dmgAppliedt.oFixed(0) + ' damage to ' + defender.get('name'));
+	message('CRITICAL! ' + dmgApplied.toFixed(0) + ' damage to ' + defender.get('name'));
 	//TODO ATTACKRESULT_CRITICALHIT animation
 	console.log('ATTACKRESULT_CRITICALHIT! Dmg: ' + dmg);	
 }

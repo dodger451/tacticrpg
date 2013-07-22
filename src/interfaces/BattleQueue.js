@@ -111,7 +111,7 @@ defaults: {
 QueuePortrait = BaseEntity.extend({
 defaults: {
         'characterId' : null,
-        'prio':'nullnull'
+        'prio':0
     },
     initialize: function(){
 	    var model = this;
@@ -236,7 +236,7 @@ defaults: {
        model.get("labelName").text(charModel.get("name"));	
        model.get("labelHealth").text('health: ' + Math.round(charModel.c().getCurrentHealth()) + ' / ' + Math.round(charModel.c().getHealth()));	
 	   model.get("labelArmor").text('armor: ' + Math.round(charModel.c().getArmor()));	
-	   model.get("labelPrio").text('' + this.get('prio'));
+	   model.get("labelPrio").text('' + (Math.round(this.get('prio')*100)/100) + 's');
 	   
 	
     }
