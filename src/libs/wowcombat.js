@@ -24,7 +24,7 @@ function Combatrules() {
 Combatrules.prototype.getMissChance = function(attacker, defender) {
 
 	var diff = defender.getDefenseSkill() - attacker.getAttackSkill();
-	console.log('getMissChance : diff='+diff+'= defender "'+defender.getId()+'" getDefenseSkill() = '+defender.getDefenseSkill()+' - attacker "'+attacker.getId()+'" getAttackSkill()='+attacker.getAttackSkill()+'');
+	//console.log('getMissChance : diff='+diff+'= defender "'+defender.getId()+'" getDefenseSkill() = '+defender.getDefenseSkill()+' - attacker "'+attacker.getId()+'" getAttackSkill()='+attacker.getAttackSkill()+'');
 	if (!defender.isMob()) {//vs player
 		//When a player or mob attacks a player, the base miss rate is 5%.
 		var basechance = 5;
@@ -42,14 +42,14 @@ Combatrules.prototype.getMissChance = function(attacker, defender) {
 			if (attacker.isDualWielding()) {
 				basechance = 24;
 			}
-			console.log('getMissChance: return for diff smaller 10 against mob');
+			//console.log('getMissChance: return for diff smaller 10 against mob');
 			return basechance + (diff) * 0.1;
 		} else {
 			var basechance = 6;
 			if (attacker.isDualWielding()) {
 				basechance = 25;
 			}
-			console.log("last caase, diff:" + diff);
+			//console.log("last caase, diff:" + diff);
 			return Math.max(0.0, (basechance + (diff - 10)* 0.4));
 		}
 	}
@@ -346,8 +346,10 @@ Combatant.prototype.getBaseHealth = function() {
  * @return int
  */
 Combatant.prototype.getHealth = function() {
-	//TODO Combatant getHealth add bonus from equipment and others 
-	return this.getBaseHealth() ;
+	//TODO Combatant getHealth add bonus from equipment and other
+	//Stamina provides 1 health per stamina for the first 20 points of stamina, and 10 health per point of stamina thereafter. 
+	var healthFromStamina = Math.min(20, this.getStamina()) + (Math.max(0, this.getStamina()-20) * 10);
+	return this.getBaseHealth() + healthFromStamina;
 }
 /**
  * current Mana
@@ -371,7 +373,11 @@ Combatant.prototype.getBaseMana = function() {
  */
 Combatant.prototype.getMana = function() {
 	//TODO Combatant getMana add bonus from equipment and others 
-	return this.getBaseMana() ;
+	//Each point of intellect gives player characters 15 mana points 
+	//(except from the first 20 points of Intellect that provide 1 mana for each point instead).
+	//
+	var manaFromInt = Math.min(20, this.getIntellect()) + (Math.max(0, this.getIntellect()-20) * 15);
+	return this.getBaseMana() + manaFromInt;
 }
 
 
@@ -796,6 +802,8 @@ Combatant.prototype.getArmorFromMagic = function() {
 	return 2;//TODO Combatant getArmorFromMagic calc from current effects
 }
 
+//TODO getMAnaReg
+//TODO getHealthReg
 
 //	
 
@@ -852,43 +860,3 @@ Weapon.prototype.getDamageType = function() {
 Weapon.prototype.getName = function() {
 	return this._config.name;
 }
-
-var defaultMeleeWeaponConfig = {
-	isMeleeWeapon : true,
-	maxDamage : 15,
-	minDamage : 10,
-	speed : 2.0,
-	damageType: "DAMAGETYPE_WHITE", 
-	name: 'defaultMeleeWeapon'
-}
-var heavyMeleeWeaponConfig = {
-	isMeleeWeapon : true,
-	maxDamage : 30,
-	minDamage : 15,
-	speed : 3.0,
-	damageType: "DAMAGETYPE_WHITE", 
-	name: 'heavyMeleeWeapon'
-}
-var defaultRangeWeaponConfig = {
-	isMeleeWeapon : false,
-	maxDamage : 20,
-	minDamage : 15,
-	speed : 2.5,
-	damageType: "DAMAGETYPE_WHITE",
-	name: 'defaultRangeWeapon'
-}
-
-var weaponConfigs = [
-		{itemId: 0, slotId:'mainweapon', config: defaultMeleeWeaponConfig},
-		{itemId: 1, slotId:'mainweapon', config: heavyMeleeWeaponConfig},
-		{itemId: 2, slotId:'mainweapon', config: defaultRangeWeaponConfig},
-		
-	] ;
-
-
-var armors = [
-		{itemId: 0, slotId:'armor', name: 'Casual cloth', armor: 1},
-		{itemId: 1, slotId:'armor', name: 'Heavy Lether outfit', armor: 3},
-		{itemId: 2, slotId:'armor', name: 'Ares Combat armor', armor: 10},
-		
-	] ;

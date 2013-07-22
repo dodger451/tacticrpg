@@ -10,7 +10,9 @@ Crafty.scene('battlefield',  function() {
         "src/interfaces/BattleQueue.js",
        "src/interfaces/dialogs/MessageDialog.js",
        "src/interfaces/dialogs/AttackConfirmDialog.js",
-       "src/interfaces/dialogs/ButtonDialog.js"
+       "src/interfaces/dialogs/ButtonDialog.js",
+       "src/assets/itemdb.js",
+       
 	];
 	
 	//when everything is loaded, run the main scene
@@ -72,7 +74,7 @@ function message(txt) {
  */
 function addCharacter(c) {
 	sc[c.get('characterId')] = c;
-    infc['queue'].push(c.get('characterId'), Crafty.math.randomInt(0,10));//TODO get start prio from char
+    infc['queue'].push(c.get('characterId'), 0);
 	//TODO add to strategic map
 }
 /**
@@ -141,28 +143,23 @@ function checkWinCondition() {
 
 function getWinnerBySoleSurvivor() {
 	var factions = [];
-	console.log(sc.length + ' cahrs found');
-    console.log(sc);
-    for (var charId in sc) {
+	for (var charId in sc) {
 		if (sc.hasOwnProperty(charId)) {
 		    var character = sc[charId];
-		    
-		 
-			console.log(character.get('name') + ' has color ' + character.get('color'));
+			//console.log(character.get('name') + ' has color ' + character.get('color'));
 			if(character.isAlive()) {
 				var color = character.get('color');
-				console.log(character.get('name') + ' is alive with color ' + color);
+				//console.log(character.get('name') + ' is alive with color ' + color);
 			    if(-1 == factions.indexOf(color)){
 			  		factions.push(color); 
 			    }
 			} else {
-				console.log(character.get('name') + ' is dead!');
+				//console.log(character.get('name') + ' is dead!');
 			}
-	    	
-	        
 	    }
 	}   
     if (factions.length === 1) {
+    	console.log(factions[0] + ' wins');
     	return factions[0];
     }
     if (factions.length === 0) {
@@ -182,7 +179,7 @@ function proceedQueue() {
  * @param {Character} defender
  */
 function executeAttack(attacker, defender) {
-	console.log("execute attack on "+defender.get('name'));
+	//console.log("execute attack on "+defender.get('name'));
 	//run attack
 	var ruleBook = new Combatrules();
 	var topQueueItem = infc['queue'].pop();
@@ -248,9 +245,9 @@ function onCriticalHit(attacker, defender) {
 	var ruleBook = new Combatrules();
 	var dmg = 2 * ruleBook.rollDamage(attacker.c(), defender.c());
 	var dmgApplied = defender.c().applyHealthDamage(dmg);
-	message('CRITICAL! ' + dmgApplied + ' damage to ' + defender.get('name'));
-	
-	console.log('ATTACKRESULT_CRITICALHIT! Dmg: ' + dmg);//TODO ATTACKRESULT_CRITICALHIT	
+	message('CRITICAL! ' + dmgAppliedt.oFixed(0) + ' damage to ' + defender.get('name'));
+	//TODO ATTACKRESULT_CRITICALHIT animation
+	console.log('ATTACKRESULT_CRITICALHIT! Dmg: ' + dmg);	
 }
 function onCrushingBlow(attacker, defender) {
 	message('todo: crushing blow' );
@@ -262,7 +259,7 @@ function onOrdinaryHit(attacker, defender) {
 	var ruleBook = new Combatrules();
 	var dmg = ruleBook.rollDamage(attacker.c(), defender.c()); 
 	var dmgApplied = defender.c().applyHealthDamage(dmg);
-	message('Hit! '+dmgApplied + ' damage to ' + defender.get('name'));
+	message('Hit! '+dmgApplied.toFixed(0) + ' damage to ' + defender.get('name'));
 	console.log('ATTACKRESULT_ORDINARY_HIT! Dmg: ' + dmg +' ('+dmgApplied+' apllied)');
 }
 //debug stuff
@@ -271,18 +268,19 @@ function generateRandomChar() {
 	var lastnames = ['Gomez', 'Boateng', 'Ribery', 'Hummels', 'Robben', 'Lahm', 'Müller', 'Abba'];
 	var colors = ['red', 'blue', 'yellow', 'green', 'orange'];
 	var newCharId = 'char' + Crafty.math.randomInt(0,100);
+    var rndConfig = weaponConfigs[Crafty.math.randomInt(0,weaponConfigs.length-1)].config;//defaultMeleeWeaponConfig defaultRangeWeaponConfig    
+
     var c = new Character();
-    c.set({'characterId': newCharId});
-    c.set({'name': names[Crafty.math.randomInt(0,names.length-1)] + ' ' +lastnames[Crafty.math.randomInt(0,lastnames.length-1)]});
-    c.set({'itemSlots':
-    	{
+    c.set({
+    	'characterId': newCharId,
+    	'isMob':false,
+    	'name': names[Crafty.math.randomInt(0,names.length-1)] + ' ' +lastnames[Crafty.math.randomInt(0,lastnames.length-1)],
+    	'itemSlots': {
     		'armor': armors[Crafty.math.randomInt(0,armors.length-1)].itemId,
-    		
-    	}
+    		'mainhand':new Weapon(rndConfig)
+    	},
+    	'color': colors[Crafty.math.randomInt(0,colors.length-1)]
     });
-    var rndConfig = weaponConfigs[Crafty.math.randomInt(0,weaponConfigs.length-1)].config;//defaultMeleeWeaponConfig defaultRangeWeaponConfig
-    c.set({'attackWeapon':new Weapon(rndConfig)});
-    c.set({'color': colors[Crafty.math.randomInt(0,colors.length-1)]});
     
     return c;
 }

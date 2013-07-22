@@ -29,8 +29,7 @@ Character = BaseEntity.extend({
 		'stamina':10,
 		'intellect':10,
 		'spirit':10,
-		'isMob':true,
-		'attackWeapon':null,//TODO check if better default possible
+		'isMob':false,
 		'level':1,
 
 	},
@@ -81,7 +80,9 @@ Character = BaseEntity.extend({
 			return this.model.get('isMob');
 		}
 		c.getAttackWeapon = function() {
-			return this.model.get('attackWeapon');
+			var equip = this.model.get('itemSlots');
+			return equip.mainhand;
+//			return this.model.get('attackWeapon');
 		}
 		c.getLevel = function() {
 			return this.model.get('level');
