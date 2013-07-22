@@ -268,8 +268,9 @@ function generateRandomChar() {
 	var lastnames = ['Gomez', 'Boateng', 'Ribery', 'Hummels', 'Robben', 'Lahm', 'Müller', 'Abba'];
 	var colors = ['red', 'blue', 'yellow', 'green', 'orange'];
 	var newCharId = 'char' + Crafty.math.randomInt(0,100);
-    var rndConfig = weaponConfigs[Crafty.math.randomInt(0,weaponConfigs.length-1)].config;//defaultMeleeWeaponConfig defaultRangeWeaponConfig    
-
+	var weapons = itemdb.getBySlot('mainhand');
+	var armors = itemdb.getBySlot('armor');
+    
     var c = new Character();
     c.set({
     	'characterId': newCharId,
@@ -277,7 +278,7 @@ function generateRandomChar() {
     	'name': names[Crafty.math.randomInt(0,names.length-1)] + ' ' +lastnames[Crafty.math.randomInt(0,lastnames.length-1)],
     	'itemSlots': {
     		'armor': armors[Crafty.math.randomInt(0,armors.length-1)].itemId,
-    		'mainhand':new Weapon(rndConfig)
+    		'mainhand': weapons[Crafty.math.randomInt(0,weapons.length-1)].itemId
     	},
     	'color': colors[Crafty.math.randomInt(0,colors.length-1)]
     });

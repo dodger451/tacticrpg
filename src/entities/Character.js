@@ -81,7 +81,7 @@ Character = BaseEntity.extend({
 		}
 		c.getAttackWeapon = function() {
 			var equip = this.model.get('itemSlots');
-			return equip.mainhand;
+			return new Weapon(itemdb.getById(equip.mainhand));
 //			return this.model.get('attackWeapon');
 		}
 		c.getLevel = function() {
@@ -93,7 +93,7 @@ Character = BaseEntity.extend({
 
 		c.getArmorFromGear = function() {
 			var equip = this.model.get('itemSlots');
-			return armors[equip.armor].armor;
+			return itemdb.getById(equip.armor).armor;
 		}
 		
 		return c;
